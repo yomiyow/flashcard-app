@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">flashcard-app</string>
+    <string name="app_name">Flashcard</string>
+
+    <!-- Login page resources -->
+    <string name="logo">logo</string>
+    <string name="email_label">Email</string>
+    <string name="email_hint">Enter your email address</string>
+    <string name="password_label">Password</string>
+    <string name="password_hint">Enter your password</string>
+    <string name="show_password_label">Show Password</string>
+    <string name="login_btn_label">Login</string>
+    <string name="signup_link_label">New to app? Create an account</string>
 </resources>
