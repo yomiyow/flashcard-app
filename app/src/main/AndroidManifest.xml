@@ -13,6 +13,9 @@
         android:theme="@style/Theme.Flashcardapp"
         tools:targetApi="31">
         <activity
+            android:name="project.main.CreateActivity"
+            android:exported="true" />
+        <activity
             android:name="project.main.HomeActivity"
             android:exported="true" />
         <activity
