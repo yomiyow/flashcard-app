@@ -16,4 +16,9 @@
     <string name="login_link_label">Already have an account? Login</string>
     <string name="username">Username</string>
     <string name="username_hint">Enter your username</string>
+
+    <!-- Home page resources -->
+    <string name="home_h1">Your Learning Journey Starts Here!</string>
+    <string name="home_description_1">It looks a little empty...</string>
+    <string name="home_description_2">Create your first flashcard and unlock a smarter way to learn.</string>
 </resources>
