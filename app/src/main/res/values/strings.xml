@@ -10,4 +10,10 @@
     <string name="show_password_label">Show Password</string>
     <string name="login_btn_label">Login</string>
     <string name="signup_link_label">New to app? Create an account</string>
+
+    <!-- Sign up page resources -->
+    <string name="signup_btn_label">Sign up</string>
+    <string name="login_link_label">Already have an account? Login</string>
+    <string name="username">Username</string>
+    <string name="username_hint">Enter your username</string>
 </resources>

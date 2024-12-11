@@ -4,7 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="input_field">#F6F7FB</color>
     <color name="primary_text_color">#5D6783</color>
-    <color name="hint_text_color">#979FB7</color>
+    <color name="hint_text_color">#78909C</color>
     <color name="login_btn_color">#423ED8</color>
 
 </resources>

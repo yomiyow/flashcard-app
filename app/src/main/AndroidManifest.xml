@@ -13,7 +13,10 @@
         android:theme="@style/Theme.Flashcardapp"
         tools:targetApi="31">
         <activity
-            android:name="project.authentication.LoginActivity"
+            android:name=".SignupActivity"
+            android:exported="true" />
+        <activity
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
