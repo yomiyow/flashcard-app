@@ -63,24 +63,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // account username validation
     public boolean isUsernameTaken(UserModel userModel) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT 1 FROM " + TABLE_USERS + " WHERE " + COLUMN_USERNAME + " = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{userModel.getUsername()});
-        boolean exists = (cursor.getCount() > 0);
-        cursor.close();
+        try (SQLiteDatabase db = this.getReadableDatabase()) {
+            String query = "SELECT 1 FROM " + TABLE_USERS + " WHERE " + COLUMN_USERNAME + " = ?";
+            Cursor cursor = db.rawQuery(query, new String[]{userModel.getUsername()});
+            boolean exists = (cursor.getCount() > 0);
+            cursor.close();
 
-        return exists;
+            return exists;
+        }
     }
 
     public boolean registerUser(UserModel userModel) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            ContentValues cv = new ContentValues();
+            cv.put(COLUMN_EMAIL, userModel.getEmail());
+            cv.put(COLUMN_USERNAME, userModel.getUsername());
+            cv.put(COLUMN_PASSWORD, userModel.getPassword());
+            long insertResult = db.insert(TABLE_USERS, null, cv);
 
-        cv.put(COLUMN_EMAIL, userModel.getEmail());
-        cv.put(COLUMN_USERNAME, userModel.getUsername());
-        cv.put(COLUMN_PASSWORD, userModel.getPassword());
-
-        long insert = db.insert(TABLE_USERS, null, cv);
-        return (insert != -1);
+            return (insertResult != -1);
+        }
     }
 }
