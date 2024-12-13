@@ -1,5 +1,6 @@
 package project.authentication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +18,7 @@ import project.model.UserModel;
 public class SignupActivity extends AppCompatActivity {
 
     EditText email, username, password;
-    Button signupBtn;
+    Button signupBtn, loginLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +35,10 @@ public class SignupActivity extends AppCompatActivity {
         username = findViewById(R.id.username_et);
         password = findViewById(R.id.password_et);
         signupBtn = findViewById(R.id.signup_btn);
+        loginLink = findViewById(R.id.login_link);
 
         singUpActionPerformed();
+        loginLinkActionPerformed();
     }
 
     private void singUpActionPerformed() {
@@ -67,6 +70,13 @@ public class SignupActivity extends AppCompatActivity {
                 Toast.makeText(this, "An error occurred: " + e.getMessage(),
                         Toast.LENGTH_SHORT).show();
             }
+        });
+    }
+
+    private void loginLinkActionPerformed() {
+        loginLink.setOnClickListener((v) -> {
+            Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+            startActivity(intent);
         });
     }
 }

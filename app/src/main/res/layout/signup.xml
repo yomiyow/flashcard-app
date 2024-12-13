@@ -109,7 +109,7 @@
         />
 
     <Button
-        android:id="@+id/signup_link"
+        android:id="@+id/login_link"
         android:layout_width="match_parent"
         android:layout_height="@dimen/signup_link_layout_height"
         android:background="@color/white"
