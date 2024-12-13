@@ -1,6 +1,7 @@
 package project.authentication;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,9 +46,9 @@ public class SignupActivity extends AppCompatActivity {
         signupBtn.setOnClickListener((v) -> {
             try (DatabaseHelper database = new DatabaseHelper(SignupActivity.this)) {
                 UserModel user = new UserModel(
-                        email.getText().toString(),
-                        username.getText().toString(),
-                        password.getText().toString()
+                        email.getText().toString().trim(),
+                        username.getText().toString().trim(),
+                        password.getText().toString().trim()
                 );
 
                 boolean exist = database.isUsernameTaken(user);
@@ -65,9 +66,11 @@ public class SignupActivity extends AppCompatActivity {
                 }
 
                 Toast.makeText(this, "Registered Successfully.", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(this, "An error occurred: " + e.getMessage(),
+            } catch (IllegalArgumentException e) {
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+            } catch (SQLiteException e) {
+                Toast.makeText(this, "Database error occurred: " + e.getMessage(),
                         Toast.LENGTH_SHORT).show();
             }
         });

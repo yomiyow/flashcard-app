@@ -1,5 +1,7 @@
 package project.model;
 
+import android.widget.Toast;
+
 public class UserModel {
 
     private String email;
@@ -7,6 +9,9 @@ public class UserModel {
     private String password;
 
     public UserModel(String email, String username, String password) {
+        if (email.isEmpty() || username.isEmpty() || password.isEmpty()) {
+            throw new IllegalArgumentException("All fields are required!");
+        }
         this.email = email;
         this.username = username;
         this.password = password;
