@@ -98,7 +98,7 @@
         android:paddingEnd="16dp" />
 
     <Button
-        android:id="@+id/login_btn"
+        android:id="@+id/signup_btn"
         android:layout_width="match_parent"
         android:layout_height="@dimen/btn_layout_height"
         android:layout_marginBottom="10dp"
