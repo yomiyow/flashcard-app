@@ -1,7 +1,5 @@
 package project.model;
 
-import android.widget.Toast;
-
 public class UserModel {
 
     private String email;
