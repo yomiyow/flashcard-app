@@ -65,11 +65,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean isUsernameTaken(UserModel userModel) {
         try (SQLiteDatabase db = this.getReadableDatabase()) {
             String query = "SELECT 1 FROM " + TABLE_USERS + " WHERE " + COLUMN_USERNAME + " = ?";
+
             Cursor cursor = db.rawQuery(query, new String[]{userModel.getUsername()});
-            boolean exists = (cursor.getCount() > 0);
+            boolean exist = (cursor.getCount() > 0);
             cursor.close();
 
-            return exists;
+            return exist;
         }
     }
 
@@ -82,6 +83,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             long insertResult = db.insert(TABLE_USERS, null, cv);
 
             return (insertResult != -1);
+        }
+    }
+
+    public boolean loginUser(UserModel userModel) {
+        try (SQLiteDatabase db = this.getReadableDatabase()) {
+            String query = String.format(
+                    "SELECT 1 FROM %s " +
+                    "WHERE email = ? AND password = ?",
+                    TABLE_USERS
+            );
+            Cursor cursor = db.rawQuery(
+                    query,
+                    new String[]{userModel.getEmail(), userModel.getPassword()}
+            );
+            boolean exist = (cursor.getCount() > 0);
+            cursor.close();
+
+            return exist;
         }
     }
 }

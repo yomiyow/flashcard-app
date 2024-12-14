@@ -17,6 +17,14 @@ public class UserModel {
         this.password = password;
     }
 
+    public UserModel(String email, String password) {
+        if (email.isEmpty() || password.isEmpty()) {
+            throw new IllegalArgumentException("All fields are required!");
+        }
+        this.email = email;
+        this.password = password;
+    }
+
     @Override
     public String toString() {
         return  "email: " + email + "\n" +
