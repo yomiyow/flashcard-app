@@ -1,6 +1,8 @@
 package project.main;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,5 +24,13 @@ public class HomeActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        ImageButton createFlashcard = findViewById(R.id.create_flashcard);
+        createFlashcard.setOnClickListener((v) -> navigateToCreateActivity());
+    }
+
+    private void navigateToCreateActivity() {
+        Intent intent = new Intent(HomeActivity.this, CreateActivity.class);
+        startActivity(intent);
     }
 }

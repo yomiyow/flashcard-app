@@ -12,6 +12,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import project.main.HomeActivity;
 import project.model.DatabaseHelper;
 import project.model.UserModel;
 
@@ -50,11 +51,13 @@ public class LoginActivity extends AppCompatActivity {
                 );
 
                 boolean accountExist = database.loginUser(user);
-                if (accountExist) {
-                    Toast.makeText(this, "Account exist", Toast.LENGTH_SHORT).show();
-                } else {
+                if (!accountExist) {
                     Toast.makeText(this, "Account not found!", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                startActivity(intent);
             } catch (IllegalArgumentException e) {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
