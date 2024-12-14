@@ -1,39 +1,75 @@
 package project.model;
 
+import java.util.List;
+
 public class FlashcardModel {
 
     private String title;
-    private String  term;
-    private String  description;
-    public FlashcardModel(String title, String term, String description) {
-        this.title = title;
-        this.term = term;
-        this.description = description;
+    private List<TermDefinition> termDefinitions;
+
+    public FlashcardModel() {}
+
+    @Override
+    public String toString() {
+        return "FlashcardModel{" +
+                "title='" + title + '\'' +
+                ", termDefinitions=" + termDefinitions.toString() +
+                '}';
     }
 
     public String getTitle() {
-        return title;
+        return this.title;
     }
 
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public String getTerm() {
-        return term;
+    public List<TermDefinition> getTermDefinitions() {
+        return this.termDefinitions;
     }
 
-    public void setTerm(String term) {
-        this.term = term;
+    public void setTermDefinitions(List<TermDefinition> termDefinitions) {
+        this.termDefinitions = termDefinitions;
     }
 
-    public String getDescription() {
-        return description;
+    public TermDefinition createTermDefinitions(String term, String definition) {
+        return new TermDefinition(term, definition);
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    // Inner class
+    public class TermDefinition {
+        private String term;
+        private String definition;
 
+        public TermDefinition(String term, String definition) {
+            this.term = term;
+            this.definition = definition;
+        }
+
+        @Override
+        public String toString() {
+            return "TermDefinition{" +
+                    "term='" + term + '\'' +
+                    ", definition='" + definition + '\'' +
+                    '}';
+        }
+
+        public String getTerm() {
+            return term;
+        }
+
+        public void setTerm(String term) {
+            this.term = term;
+        }
+
+        public String getDefinition() {
+            return definition;
+        }
+
+        public void setDefinition(String definition) {
+            this.definition = definition;
+        }
+    }
 
 }

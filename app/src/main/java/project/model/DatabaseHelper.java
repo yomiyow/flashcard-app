@@ -16,6 +16,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String TABLE_FLASHCARDS = "flashcards";
     public static final String COLUMN_FLASHCARD_ID = "flashcard_id";
+    public static final String COLUMN_TITLE = "title";
+
+    public static final String TABLE_TERM_DEFINITION = "terms_definitions";
+    public static final String COLUMN_TERM_DEFINITION_ID = "term_definition_id";
     public static final String COLUMN_TERM = "term";
     public static final String COLUMN_DEFINITION = "definition";
 
@@ -26,34 +30,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // create users table
-        final String CREATE_TABLE_USERS = String.format(
-                "CREATE TABLE %s (" +
-                    "%s TEXT PRIMARY KEY, " +
-                    "%s TEXT UNIQUE, " +
-                    "%s TEXT" +
-                ")",
-                TABLE_USERS, COLUMN_EMAIL,
-                COLUMN_USERNAME, COLUMN_PASSWORD
-        );
+        final String CREATE_TABLE_USERS =
+                "CREATE TABLE " + TABLE_USERS + " (" +
+                    COLUMN_EMAIL + " TEXT PRIMARY KEY, " +
+                    COLUMN_USERNAME + " TEXT UNIQUE, " +
+                    COLUMN_PASSWORD + " TEXT" +
+                ")";
+
+
+        // create term_definition table
+        final String CREATE_TABLE_TERM_DEFINITION =
+                "CREATE TABLE " + TABLE_TERM_DEFINITION + " (" +
+                    COLUMN_TERM_DEFINITION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COLUMN_FLASHCARD_ID + " INTEGER, " +
+                    COLUMN_TERM + " TEXT, " +
+                    COLUMN_DEFINITION + " TEXT, " +
+                    "FOREIGN KEY (" + COLUMN_FLASHCARD_ID + ") REFERENCES flashcards(" + COLUMN_FLASHCARD_ID + ")" +
+                ")";
 
         // create flashcards table
-        final String CREATE_TABLE_FLASHCARD = String.format(
-                "CREATE TABLE %s (" +
-                    "%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "%s TEXT, " +
-                    "%s TEXT, " +
-                    "%s TEXT, " +
-                    "FOREIGN KEY (%s) REFERENCES users(%s)" +
-                ")",
-                TABLE_FLASHCARDS, COLUMN_FLASHCARD_ID,
-                COLUMN_EMAIL, COLUMN_TERM,
-                COLUMN_DEFINITION, COLUMN_EMAIL,
-                COLUMN_EMAIL
-        );
+        final String CREATE_TABLE_FLASHCARD =
+                "CREATE TABLE " + TABLE_FLASHCARDS + " (" +
+                    COLUMN_FLASHCARD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COLUMN_TITLE + " TEXT" +
+                ")";
 
         // query to database
         db.execSQL(CREATE_TABLE_USERS);
         db.execSQL(CREATE_TABLE_FLASHCARD);
+        db.execSQL(CREATE_TABLE_TERM_DEFINITION);
     }
 
     @Override
@@ -88,11 +93,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public boolean loginUser(UserModel userModel) {
         try (SQLiteDatabase db = this.getReadableDatabase()) {
-            String query = String.format(
-                    "SELECT 1 FROM %s " +
-                    "WHERE email = ? AND password = ?",
-                    TABLE_USERS
-            );
+            String query = "SELECT 1 FROM " + TABLE_USERS + " WHERE email = ? AND password = ?";
             Cursor cursor = db.rawQuery(
                     query,
                     new String[]{userModel.getEmail(), userModel.getPassword()}
@@ -101,6 +102,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor.close();
 
             return exist;
+        }
+    }
+
+    public boolean insertFlashcard(FlashcardModel flashcard) {
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            ContentValues flashcardValues = new ContentValues();
+            flashcardValues.put(COLUMN_TITLE, flashcard.getTitle());
+
+            long flashCardId = db.insert(TABLE_FLASHCARDS, null, flashcardValues);
+
+            for (FlashcardModel.TermDefinition termDefinition : flashcard.getTermDefinitions()) {
+                ContentValues termDefValues = new ContentValues();
+                termDefValues.put(COLUMN_FLASHCARD_ID, flashCardId);
+                termDefValues.put(COLUMN_TERM, termDefinition.getTerm());
+                termDefValues.put(COLUMN_DEFINITION, termDefinition.getDefinition());
+
+                db.insert(TABLE_TERM_DEFINITION, null, termDefValues);
+            }
+
+            return flashCardId != -1;
         }
     }
 }
