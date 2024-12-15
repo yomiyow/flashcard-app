@@ -6,6 +6,12 @@ public class FlashcardModel {
 
     private String title;
     private List<TermDefinition> termDefinitions;
+    private int numberOfTerms;
+
+    public FlashcardModel(String title, int numberOfTerms) {
+        this.title = title;
+        this.numberOfTerms = numberOfTerms;
+    }
 
     public FlashcardModel() {}
 
@@ -13,7 +19,7 @@ public class FlashcardModel {
     public String toString() {
         return "FlashcardModel{" +
                 "title='" + title + '\'' +
-                ", termDefinitions=" + termDefinitions.toString() +
+                ", numberOfTerms=" + numberOfTerms +
                 '}';
     }
 
@@ -31,6 +37,10 @@ public class FlashcardModel {
 
     public void setTermDefinitions(List<TermDefinition> termDefinitions) {
         this.termDefinitions = termDefinitions;
+    }
+
+    public int getNumberOfTerms() {
+        return numberOfTerms;
     }
 
     public TermDefinition createTermDefinitions(String term, String definition) {

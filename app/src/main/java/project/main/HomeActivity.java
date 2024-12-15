@@ -2,7 +2,11 @@ package project.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,7 +14,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.List;
+
 import project.authentication.R;
+import project.model.DatabaseHelper;
+import project.model.FlashcardModel;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -25,12 +33,33 @@ public class HomeActivity extends AppCompatActivity {
             return insets;
         });
 
-        ImageButton createFlashcard = findViewById(R.id.create_flashcard);
-        createFlashcard.setOnClickListener((v) -> navigateToCreateActivity());
+        ImageButton addBtn = findViewById(R.id.new_flashcard);
+        addBtn.setOnClickListener((v) -> navigateToCreateActivity());
+        renderFlashcards();
     }
 
     private void navigateToCreateActivity() {
         Intent intent = new Intent(HomeActivity.this, CreateActivity.class);
         startActivity(intent);
+    }
+
+    private void renderFlashcards() {
+        LayoutInflater inflater = LayoutInflater.from(HomeActivity.this);
+        LinearLayout flashcardContainer = findViewById(R.id.flashcard_container);
+
+        try (DatabaseHelper dbHelper = new DatabaseHelper(HomeActivity.this)) {
+            List<FlashcardModel> flashcardList = dbHelper.getFlashcardTitleAndNumberOfTerms();
+
+            for (var flashchard : flashcardList) {
+                View flashcardPreview = inflater.inflate(R.layout.flashcard_preview, flashcardContainer, false);
+
+                TextView titleTV = flashcardPreview.findViewById(R.id.title);
+                titleTV.setText(flashchard.getTitle());
+                TextView numberOfTermsTV = flashcardPreview.findViewById(R.id.no_of_terms);
+                numberOfTermsTV.setText(flashchard.getNumberOfTerms() + " terms");
+
+                flashcardContainer.addView(flashcardPreview);
+            }
+        }
     }
 }

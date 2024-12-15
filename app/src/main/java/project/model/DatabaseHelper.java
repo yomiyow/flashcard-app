@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String TABLE_USERS = "users";
@@ -22,6 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TERM_DEFINITION_ID = "term_definition_id";
     public static final String COLUMN_TERM = "term";
     public static final String COLUMN_DEFINITION = "definition";
+    public static final String COLUMN_NO_OF_TERMS = "no_of_terms";
 
     public DatabaseHelper(@Nullable Context context) {
         super(context, "flashcard.db", null, 1);
@@ -66,7 +70,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    // account username validation
+    /*====================================================================================
+                                Signup Activity Queries
+    ====================================================================================*/
+
     public boolean isUsernameTaken(UserModel userModel) {
         try (SQLiteDatabase db = this.getReadableDatabase()) {
             String query = "SELECT 1 FROM " + TABLE_USERS + " WHERE " + COLUMN_USERNAME + " = ?";
@@ -91,6 +98,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    /*====================================================================================
+                            Login Activity Queries
+    ====================================================================================*/
+
     public boolean loginUser(UserModel userModel) {
         try (SQLiteDatabase db = this.getReadableDatabase()) {
             String query = "SELECT 1 FROM " + TABLE_USERS + " WHERE email = ? AND password = ?";
@@ -104,6 +115,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return exist;
         }
     }
+
+    /*====================================================================================
+                                Create Activity Queries
+    ====================================================================================*/
 
     public boolean insertFlashcard(FlashcardModel flashcard) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
@@ -123,5 +138,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             return flashCardId != -1;
         }
+    }
+
+    /*====================================================================================
+                                Home Activity Queries
+    ====================================================================================*/
+
+    public List<FlashcardModel> getFlashcardTitleAndNumberOfTerms() {
+        List<FlashcardModel> returnList = new ArrayList<>();
+
+        try(SQLiteDatabase db = this.getReadableDatabase()) {
+            String query =
+                    "SELECT f." + COLUMN_TITLE + ", COUNT(" + COLUMN_TERM + ") AS " + COLUMN_NO_OF_TERMS + " " +
+                    "FROM " + TABLE_TERM_DEFINITION + " td " +
+                    "INNER JOIN " + TABLE_FLASHCARDS + " f " +
+                        "ON td." + COLUMN_FLASHCARD_ID + " = " + "f." + COLUMN_FLASHCARD_ID + " " +
+                    "GROUP BY f." + COLUMN_TITLE;
+            Cursor cursor = db.rawQuery(query, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    String title = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE));
+                    int numberOfTerms = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_NO_OF_TERMS));
+                    returnList.add(new FlashcardModel(title, numberOfTerms));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+
+        return returnList;
     }
 }
