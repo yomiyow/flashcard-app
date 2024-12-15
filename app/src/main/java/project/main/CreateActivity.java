@@ -69,7 +69,7 @@ public class CreateActivity extends AppCompatActivity {
     // create new flashcard item using flashcard_item.xml
     private void addNewEmptyFlashcardItem() {
         LayoutInflater inflater = LayoutInflater.from(CreateActivity.this);
-        View cardView = inflater.inflate(R.layout.flashcard_item, flashcardContainer, false);
+        View cardView = inflater.inflate(R.layout.flashcard_new_item, flashcardContainer, false);
         flashcardContainer.addView(cardView);
     }
 

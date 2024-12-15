@@ -167,4 +167,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return returnList;
     }
+
+    /*====================================================================================
+                                FlashcardOpen Activity Queries
+    ====================================================================================*/
+
+    public List<FlashcardModel.TermDefinition> getFlashcardTermAndDefinition(String title) {
+        List<FlashcardModel.TermDefinition> returnList = new ArrayList<>();
+
+        try(SQLiteDatabase db = this.getReadableDatabase()) {
+            String query =
+                    "SELECT " + COLUMN_TERM + ", " + COLUMN_DEFINITION + " " +
+                    "FROM " + TABLE_TERM_DEFINITION + " td " +
+                    "INNER JOIN " + TABLE_FLASHCARDS + " f " +
+                        "ON td." + COLUMN_FLASHCARD_ID + " = " + "f." + COLUMN_FLASHCARD_ID + " " +
+                    "WHERE f." + COLUMN_TITLE + "= ?";
+            Cursor cursor = db.rawQuery(query, new String[]{title});
+            if (cursor.moveToFirst()) {
+                do {
+                    String term = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TERM));
+                    String definition = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DEFINITION));
+                    returnList.add(new FlashcardModel().createTermDefinitions(term, definition));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+
+        return returnList;
+    }
 }

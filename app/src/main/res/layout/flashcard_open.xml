@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/flashcard_open_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="project.main.FlashcardOpenActivity"
+    android:orientation="vertical"
+    android:layout_marginRight="8dp"
+    android:layout_marginLeft="8dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="0dp"
+        android:paddingRight="8dp">
+
+        <ImageButton
+            android:id="@+id/previous_activity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/left_arrow_icon"
+            android:background="@null"
+            android:layout_gravity="center_vertical"
+            tools:ignore="ContentDescription" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/save_flashcard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/edit_icon"
+            android:background="@null"
+            android:layout_gravity="center_vertical"
+            tools:ignore="ContentDescription" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Title | Number of terms"
+        android:layout_marginTop="10dp"/>
+
+    <LinearLayout
+        android:id="@+id/flashcard_item_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    </LinearLayout>
+</LinearLayout>

@@ -43,22 +43,29 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void openFlashcard(TextView title, TextView numberOfTerms) {
+        Intent intent = new Intent(HomeActivity.this, FlashcardOpenActivity.class);
+        intent.putExtra("flashcardTitle", title.getText().toString());
+        intent.putExtra("numberOfTerms", numberOfTerms.getText().toString());
+        startActivity(intent);
+    }
+
     private void renderFlashcards() {
-        LayoutInflater inflater = LayoutInflater.from(HomeActivity.this);
         LinearLayout flashcardContainer = findViewById(R.id.flashcard_container);
+        LayoutInflater inflater = LayoutInflater.from(HomeActivity.this);
 
         try (DatabaseHelper dbHelper = new DatabaseHelper(HomeActivity.this)) {
             List<FlashcardModel> flashcardList = dbHelper.getFlashcardTitleAndNumberOfTerms();
 
             for (var flashchard : flashcardList) {
                 View flashcardPreview = inflater.inflate(R.layout.flashcard_preview, flashcardContainer, false);
-
                 TextView titleTV = flashcardPreview.findViewById(R.id.title);
                 titleTV.setText(flashchard.getTitle());
                 TextView numberOfTermsTV = flashcardPreview.findViewById(R.id.no_of_terms);
                 numberOfTermsTV.setText(flashchard.getNumberOfTerms() + " terms");
 
                 flashcardContainer.addView(flashcardPreview);
+                flashcardPreview.setOnClickListener((v) -> openFlashcard(titleTV, numberOfTermsTV));
             }
         }
     }
