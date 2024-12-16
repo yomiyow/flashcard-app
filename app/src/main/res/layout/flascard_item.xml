@@ -13,4 +13,13 @@
         android:text="Term"
         android:layout_gravity="center"
         android:textSize="32sp"/>
+
+    <TextView
+        android:id="@+id/definition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Term"
+        android:layout_gravity="center"
+        android:textSize="16sp"
+        android:visibility="gone"/>
 </androidx.cardview.widget.CardView>
