@@ -12,6 +12,7 @@
         android:layout_margin="12dp">
 
         <EditText
+            android:id="@+id/term_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:drawable/edit_text"
@@ -25,6 +26,7 @@
             android:textSize="@dimen/standard_text_size"/>
 
         <EditText
+            android:id="@+id/definition_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:drawable/edit_text"

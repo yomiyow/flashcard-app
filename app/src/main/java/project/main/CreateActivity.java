@@ -1,34 +1,35 @@
 package project.main;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import project.authentication.R;
 import project.model.DatabaseHelper;
+import project.model.FlashcardItemRecyclerAdapter;
 import project.model.FlashcardModel;
 
 public class CreateActivity extends AppCompatActivity {
 
-    private LinearLayout flashcardContainer;
+    private Context context;
+    private ImageButton previousAct;
+    private ImageButton saveBtn;
+    private FloatingActionButton addBtn;
     private EditText flashcardTitle;
+    private int itemCount;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,25 +42,22 @@ public class CreateActivity extends AppCompatActivity {
             return insets;
         });
 
-        flashcardContainer = findViewById(R.id.flashcard_container);
-        flashcardTitle = findViewById(R.id.flashcard_title);
-        ImageButton previousAct = findViewById(R.id.previous_activity);
-        FloatingActionButton addBtn = findViewById(R.id.add_btn);
-        ImageButton saveBtn = findViewById(R.id.save_flashcard);
-
+        initClassVariables();
+        // add 1 empty item as default
+        addNewEmptyFlashcardItem();
         previousAct.setOnClickListener((v) -> returnToPreviousActivity());
         addBtn.setOnClickListener((v) -> addNewEmptyFlashcardItem());
-        saveBtn.setOnClickListener((v) -> {
-            FlashcardModel flashcardData = collectFlashcardsData();
-            try (DatabaseHelper db = new DatabaseHelper(CreateActivity.this)) {
-                boolean success = db.insertFlashcard(flashcardData);
-                if (success) {
-                    Toast.makeText(this, "Flashcard saved successfully.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        saveBtn.setOnClickListener((v) -> saveFlashcard());
     }
 
+    private void initClassVariables() {
+        context = CreateActivity.this;
+        flashcardTitle = findViewById(R.id.flashcard_title);
+        previousAct = findViewById(R.id.previous_activity);
+        addBtn = findViewById(R.id.add_btn);
+        saveBtn = findViewById(R.id.save_flashcard);
+        recyclerView = findViewById(R.id.flashcard_new_item_rv);
+    }
 
     private void returnToPreviousActivity() {
         Intent intent = new Intent(CreateActivity.this, HomeActivity.class);
@@ -68,28 +66,25 @@ public class CreateActivity extends AppCompatActivity {
 
     // create new flashcard item using flashcard_item.xml
     private void addNewEmptyFlashcardItem() {
-        LayoutInflater inflater = LayoutInflater.from(CreateActivity.this);
-        View cardView = inflater.inflate(R.layout.flashcard_new_item, flashcardContainer, false);
-        flashcardContainer.addView(cardView);
+        itemCount++;
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        FlashcardItemRecyclerAdapter adapter = new FlashcardItemRecyclerAdapter(context, itemCount);
+        recyclerView.setAdapter(adapter);
     }
 
     private FlashcardModel collectFlashcardsData() {
         FlashcardModel flashcard = new FlashcardModel();
         List<FlashcardModel.TermDefinition> termDefinitions = new ArrayList<>();
 
-        int flashcardItemCount = flashcardContainer.getChildCount();
-        for (int i = 0; i < flashcardItemCount; i++) {
-            View cardView = flashcardContainer.getChildAt(i);
-            if (cardView instanceof CardView) {
-                LinearLayout linearLayout = (LinearLayout) ((CardView) cardView).getChildAt(0);
+        FlashcardItemRecyclerAdapter adapter = (FlashcardItemRecyclerAdapter) recyclerView.getAdapter();
+        for (int i = 0; i < adapter.getItemCount(); i++) {
+            RecyclerView.ViewHolder flashcardItem = recyclerView.findViewHolderForAdapterPosition(i);
+            if (flashcardItem instanceof FlashcardItemRecyclerAdapter.FlashcardViewHolder) {
+                FlashcardItemRecyclerAdapter.FlashcardViewHolder flashcardViewHolder = (FlashcardItemRecyclerAdapter.FlashcardViewHolder) flashcardItem;
+                String term = flashcardViewHolder.getTermET().getText().toString();
+                String definition = flashcardViewHolder.getDefinitionET().getText().toString();
 
-                EditText term = (EditText) linearLayout.getChildAt(0);
-                EditText definition = (EditText) linearLayout.getChildAt(2);
-
-                termDefinitions.add(flashcard.createTermDefinitions(
-                        term.getText().toString(),
-                        definition.getText().toString()
-                ));
+                termDefinitions.add(flashcard.createTermDefinitions(term, definition));
             }
         }
 
@@ -97,5 +92,15 @@ public class CreateActivity extends AppCompatActivity {
         flashcard.setTermDefinitions(termDefinitions);
 
         return flashcard;
+    }
+
+    private void saveFlashcard() {
+        FlashcardModel flashcardData = collectFlashcardsData();
+        try (DatabaseHelper db = new DatabaseHelper(CreateActivity.this)) {
+            boolean success = db.insertFlashcard(flashcardData);
+            if (success) {
+                Toast.makeText(this, "Flashcard saved successfully.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
