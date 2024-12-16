@@ -14,19 +14,19 @@ import project.authentication.R;
 import project.main.FlashcardOpenActivity;
 
 
-public class FlashcardAdapter extends RecyclerView.Adapter<FlashcardAdapter.FLashcardViewHolder> {
+public class FlashcardRecyclerAdapter extends RecyclerView.Adapter<FlashcardRecyclerAdapter.FLashcardViewHolder> {
 
     Context context;
     private final List<FlashcardModel> flashcardList;
 
-    public FlashcardAdapter(Context context, List<FlashcardModel> flashcardList) {
+    public FlashcardRecyclerAdapter(Context context, List<FlashcardModel> flashcardList) {
         this.context = context;
         this.flashcardList = flashcardList;
     }
 
     @NonNull
     @Override
-    public FlashcardAdapter.FLashcardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public FlashcardRecyclerAdapter.FLashcardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View flashcardPreview = inflater.inflate(R.layout.flashcard_preview, parent, false);
 
@@ -42,7 +42,7 @@ public class FlashcardAdapter extends RecyclerView.Adapter<FlashcardAdapter.FLas
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FlashcardAdapter.FLashcardViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull FlashcardRecyclerAdapter.FLashcardViewHolder holder, int position) {
         FlashcardModel flashcard = flashcardList.get(position);
         holder.titleTV.setText(flashcard.getTitle());
         holder.numOfTermsTV.setText(flashcard.getNumberOfTerms() + " terms");

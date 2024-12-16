@@ -48,11 +48,8 @@
         android:text="Title | Number of terms"
         android:layout_marginTop="10dp"/>
 
-    <LinearLayout
-        android:id="@+id/flashcard_item_container"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/flashcard_view_pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-    </LinearLayout>
+        android:layout_height="300dp"/>
 </LinearLayout>

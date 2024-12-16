@@ -14,12 +14,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import java.util.List;
 
 import project.authentication.R;
 import project.model.DatabaseHelper;
 import project.model.FlashcardModel;
+import project.model.FlashcardPagerAdapter;
 
 public class FlashcardOpenActivity extends AppCompatActivity {
 
@@ -56,18 +59,11 @@ public class FlashcardOpenActivity extends AppCompatActivity {
         details.setText(title + " | " + numberOfTerms);
 
         // Generate flashcard item
-        LinearLayout flashcardItemContainer = findViewById(R.id.flashcard_item_container);
-        LayoutInflater inflater = LayoutInflater.from(context);
+        ViewPager2 viewPager = findViewById(R.id.flashcard_view_pager);
         try (DatabaseHelper dbHelper = new DatabaseHelper(context)) {
             List<FlashcardModel.TermDefinition> termDefinitionList = dbHelper.getFlashcardTermAndDefinition(title);
-
-            for (var termDefinition : termDefinitionList) {
-                View flashcardItem = inflater.inflate(R.layout.flascard_item, flashcardItemContainer, false);
-                TextView termTV = flashcardItem.findViewById(R.id.term);
-                termTV.setText(termDefinition.getTerm());
-
-                flashcardItemContainer.addView(flashcardItem);
-            }
+            FlashcardPagerAdapter adapter = new FlashcardPagerAdapter(context, termDefinitionList);
+            viewPager.setAdapter(adapter);
         }
     }
 }

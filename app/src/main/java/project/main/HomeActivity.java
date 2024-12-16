@@ -3,11 +3,7 @@ package project.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,7 +17,7 @@ import java.util.List;
 
 import project.authentication.R;
 import project.model.DatabaseHelper;
-import project.model.FlashcardAdapter;
+import project.model.FlashcardRecyclerAdapter;
 import project.model.FlashcardModel;
 
 public class HomeActivity extends AppCompatActivity {
@@ -56,7 +52,7 @@ public class HomeActivity extends AppCompatActivity {
 
         try (DatabaseHelper dbHelper = new DatabaseHelper(context)) {
             List<FlashcardModel> flashcardList = dbHelper.getFlashcardTitleAndNumberOfTerms();
-            FlashcardAdapter adapter = new FlashcardAdapter(context, flashcardList);
+            FlashcardRecyclerAdapter adapter = new FlashcardRecyclerAdapter(context, flashcardList);
             recyclerView.setAdapter(adapter);
         }
     }
