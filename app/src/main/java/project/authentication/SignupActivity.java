@@ -6,19 +6,17 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import project.model.DatabaseHelper;
 import project.model.UserModel;
 
 public class SignupActivity extends AppCompatActivity {
 
-    EditText email, username, password;
+    EditText emailEditText, usernameEditText, passwordEditText;
     Button signupBtn, loginLink;
 
     @Override
@@ -32,24 +30,26 @@ public class SignupActivity extends AppCompatActivity {
             return insets;
         });
 
-        email = findViewById(R.id.email_et);
-        username = findViewById(R.id.username_et);
-        password = findViewById(R.id.password_et);
-        signupBtn = findViewById(R.id.signup_btn);
-        loginLink = findViewById(R.id.login_link);
-
+        initInstanceVariables();
         singUpActionPerformed();
         loginLinkActionPerformed();
+    }
+
+    private void initInstanceVariables() {
+        emailEditText = findViewById(R.id.email_et);
+        usernameEditText = findViewById(R.id.username_et);
+        passwordEditText = findViewById(R.id.password_et);
+        signupBtn = findViewById(R.id.signup_btn);
+        loginLink = findViewById(R.id.login_link);
     }
 
     private void singUpActionPerformed() {
         signupBtn.setOnClickListener((v) -> {
             try (DatabaseHelper database = new DatabaseHelper(SignupActivity.this)) {
-                UserModel user = new UserModel(
-                        email.getText().toString().trim(),
-                        username.getText().toString().trim(),
-                        password.getText().toString().trim()
-                );
+                String email = emailEditText.getText().toString().trim();
+                String username = usernameEditText.getText().toString().trim();
+                String password = passwordEditText.getText().toString().trim();
+                UserModel user = new UserModel(email, username, password);
 
                 boolean exist = database.isUsernameTaken(user);
                 if (exist) {
