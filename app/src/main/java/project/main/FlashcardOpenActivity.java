@@ -1,5 +1,6 @@
 package project.main;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -22,6 +23,8 @@ import project.model.FlashcardModel;
 
 public class FlashcardOpenActivity extends AppCompatActivity {
 
+    private Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,13 +36,14 @@ public class FlashcardOpenActivity extends AppCompatActivity {
             return insets;
         });
 
+        context = FlashcardOpenActivity.this;
         ImageButton previousAct = findViewById(R.id.previous_activity);
         previousAct.setOnClickListener((v) -> returnToHomeActivity());
         renderFlashcardItems();
     }
 
     private void returnToHomeActivity() {
-        Intent intent = new Intent(FlashcardOpenActivity.this, HomeActivity.class);
+        Intent intent = new Intent(context, HomeActivity.class);
         startActivity(intent);
     }
 
@@ -53,8 +57,8 @@ public class FlashcardOpenActivity extends AppCompatActivity {
 
         // Generate flashcard item
         LinearLayout flashcardItemContainer = findViewById(R.id.flashcard_item_container);
-        LayoutInflater inflater = LayoutInflater.from(FlashcardOpenActivity.this);
-        try (DatabaseHelper dbHelper = new DatabaseHelper(FlashcardOpenActivity.this)) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        try (DatabaseHelper dbHelper = new DatabaseHelper(context)) {
             List<FlashcardModel.TermDefinition> termDefinitionList = dbHelper.getFlashcardTermAndDefinition(title);
 
             for (var termDefinition : termDefinitionList) {

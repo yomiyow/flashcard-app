@@ -36,7 +36,7 @@
     <LinearLayout
         android:id="@+id/flashcard_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
 <!--        <ImageView-->
@@ -84,4 +84,10 @@
 
 <!--        </LinearLayout>-->
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/flashcard_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 </LinearLayout>
