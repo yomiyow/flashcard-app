@@ -7,6 +7,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -29,7 +30,7 @@ public class CreateActivity extends AppCompatActivity {
     private FloatingActionButton addBtn;
     private EditText flashcardTitle;
     private int itemCount;
-    RecyclerView recyclerView;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,13 +79,13 @@ public class CreateActivity extends AppCompatActivity {
 
         FlashcardItemRecyclerAdapter adapter = (FlashcardItemRecyclerAdapter) recyclerView.getAdapter();
         for (int i = 0; i < adapter.getItemCount(); i++) {
-            RecyclerView.ViewHolder flashcardItem = recyclerView.findViewHolderForAdapterPosition(i);
-            if (flashcardItem instanceof FlashcardItemRecyclerAdapter.FlashcardViewHolder) {
-                FlashcardItemRecyclerAdapter.FlashcardViewHolder flashcardViewHolder = (FlashcardItemRecyclerAdapter.FlashcardViewHolder) flashcardItem;
-                String term = flashcardViewHolder.getTermET().getText().toString();
-                String definition = flashcardViewHolder.getDefinitionET().getText().toString();
+            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
+            if (viewHolder instanceof FlashcardItemRecyclerAdapter.FlashcardViewHolder) {
+                FlashcardItemRecyclerAdapter.FlashcardViewHolder flashcardItem = (FlashcardItemRecyclerAdapter.FlashcardViewHolder) viewHolder;
+                String term = flashcardItem.getTermET().getText().toString();
+                String definition = flashcardItem.getDefinitionET().getText().toString();
 
-                termDefinitions.add(flashcard.createTermDefinitions(term, definition));
+                termDefinitions.add(new FlashcardModel.TermDefinition(term, definition));
             }
         }
 

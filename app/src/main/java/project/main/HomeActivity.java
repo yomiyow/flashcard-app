@@ -22,7 +22,8 @@ import project.model.FlashcardModel;
 
 public class HomeActivity extends AppCompatActivity {
 
-    Context context;
+    private Context context;
+    private ImageButton addBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +36,14 @@ public class HomeActivity extends AppCompatActivity {
             return insets;
         });
 
-        context = HomeActivity.this;
-        ImageButton addBtn = findViewById(R.id.new_flashcard);
+        initInstanceVariables();
         addBtn.setOnClickListener((v) -> navigateToCreateActivity());
         renderFlashcardsPreview();
+    }
+
+    private void initInstanceVariables() {
+        context = HomeActivity.this;
+        addBtn = findViewById(R.id.new_flashcard);
     }
 
     private void navigateToCreateActivity() {

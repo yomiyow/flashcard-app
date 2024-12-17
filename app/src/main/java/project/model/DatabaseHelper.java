@@ -187,7 +187,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 do {
                     String term = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TERM));
                     String definition = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DEFINITION));
-                    returnList.add(new FlashcardModel().createTermDefinitions(term, definition));
+                    returnList.add(new FlashcardModel.TermDefinition(term, definition));
                 } while (cursor.moveToNext());
             }
             cursor.close();

@@ -43,12 +43,8 @@ public class FlashcardModel {
         return numberOfTerms;
     }
 
-    public TermDefinition createTermDefinitions(String term, String definition) {
-        return new TermDefinition(term, definition);
-    }
-
     // Inner class
-    public class TermDefinition {
+    public static class TermDefinition {
         private String term;
         private String definition;
 

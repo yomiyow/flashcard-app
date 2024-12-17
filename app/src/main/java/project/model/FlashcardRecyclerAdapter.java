@@ -16,7 +16,7 @@ import project.main.FlashcardOpenActivity;
 
 public class FlashcardRecyclerAdapter extends RecyclerView.Adapter<FlashcardRecyclerAdapter.FLashcardViewHolder> {
 
-    Context context;
+    private final Context context;
     private final List<FlashcardModel> flashcardList;
 
     public FlashcardRecyclerAdapter(Context context, List<FlashcardModel> flashcardList) {
@@ -46,6 +46,7 @@ public class FlashcardRecyclerAdapter extends RecyclerView.Adapter<FlashcardRecy
         FlashcardModel flashcard = flashcardList.get(position);
         holder.titleTV.setText(flashcard.getTitle());
         holder.numOfTermsTV.setText(flashcard.getNumberOfTerms() + " terms");
+
         holder.itemView.setOnClickListener((v) -> openFlashcard(flashcard));
     }
 
@@ -56,8 +57,8 @@ public class FlashcardRecyclerAdapter extends RecyclerView.Adapter<FlashcardRecy
 
     public static class FLashcardViewHolder extends RecyclerView.ViewHolder {
 
-         TextView titleTV;
-         TextView numOfTermsTV;
+         private final TextView titleTV;
+         private final TextView numOfTermsTV;
 
         public FLashcardViewHolder(@NonNull View itemView) {
             super(itemView);

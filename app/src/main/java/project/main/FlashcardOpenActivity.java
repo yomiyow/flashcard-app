@@ -27,6 +27,7 @@ import project.model.FlashcardPagerAdapter;
 public class FlashcardOpenActivity extends AppCompatActivity {
 
     private Context context;
+    private ImageButton previousAct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +40,14 @@ public class FlashcardOpenActivity extends AppCompatActivity {
             return insets;
         });
 
-        context = FlashcardOpenActivity.this;
-        ImageButton previousAct = findViewById(R.id.previous_activity);
+        initInstanceVariables();
         previousAct.setOnClickListener((v) -> returnToHomeActivity());
         renderFlashcardItems();
+    }
+
+    private void initInstanceVariables() {
+        context = FlashcardOpenActivity.this;
+        previousAct = findViewById(R.id.previous_activity);
     }
 
     private void returnToHomeActivity() {

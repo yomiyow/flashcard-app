@@ -5,16 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import project.authentication.R;
 
 public class FlashcardItemRecyclerAdapter extends RecyclerView.Adapter<FlashcardItemRecyclerAdapter.FlashcardViewHolder> {
 
-    Context context;
-    int itemCount;
+    private final Context context;
+    private final int itemCount;
 
     public FlashcardItemRecyclerAdapter(Context context, int itemCount) {
         this.context = context;
@@ -32,7 +30,6 @@ public class FlashcardItemRecyclerAdapter extends RecyclerView.Adapter<Flashcard
 
     @Override
     public void onBindViewHolder(@NonNull FlashcardItemRecyclerAdapter.FlashcardViewHolder holder, int position) {
-
     }
 
     @Override
@@ -42,8 +39,8 @@ public class FlashcardItemRecyclerAdapter extends RecyclerView.Adapter<Flashcard
 
     public static class FlashcardViewHolder extends RecyclerView.ViewHolder {
 
-        EditText termET;
-        EditText definitionET;
+        private final EditText termET;
+        private final EditText definitionET;
 
         public FlashcardViewHolder(@NonNull View itemView) {
             super(itemView);

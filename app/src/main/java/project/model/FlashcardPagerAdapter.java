@@ -16,7 +16,7 @@ import project.authentication.R;
 
 public class FlashcardPagerAdapter extends RecyclerView.Adapter<FlashcardPagerAdapter.FlashcardViewHolder> {
 
-    Context context;
+    private final Context context;
     private final List<FlashcardModel.TermDefinition> termDefinitionList;
 
     public FlashcardPagerAdapter(Context context, List<FlashcardModel.TermDefinition> termDefinitionList) {
@@ -72,10 +72,10 @@ public class FlashcardPagerAdapter extends RecyclerView.Adapter<FlashcardPagerAd
         return termDefinitionList.size();
     }
 
-    static class FlashcardViewHolder extends RecyclerView.ViewHolder {
+    public static class FlashcardViewHolder extends RecyclerView.ViewHolder {
 
-        TextView termTV;
-        TextView definitionTV;
+        private final TextView termTV;
+        private final TextView definitionTV;
 
         public FlashcardViewHolder(@NonNull View itemView) {
             super(itemView);
