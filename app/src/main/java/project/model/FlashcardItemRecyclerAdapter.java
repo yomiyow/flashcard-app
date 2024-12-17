@@ -7,16 +7,19 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import java.util.ArrayList;
+import java.util.List;
+
 import project.authentication.R;
 
 public class FlashcardItemRecyclerAdapter extends RecyclerView.Adapter<FlashcardItemRecyclerAdapter.FlashcardViewHolder> {
 
     private final Context context;
-    private final int itemCount;
+    private final List<FlashcardModel.TermDefinition> termDefinitionList;
 
-    public FlashcardItemRecyclerAdapter(Context context, int itemCount) {
+    public FlashcardItemRecyclerAdapter(Context context) {
         this.context = context;
-        this.itemCount = itemCount;
+        this.termDefinitionList = new ArrayList<>();
     }
 
     @NonNull
@@ -34,7 +37,12 @@ public class FlashcardItemRecyclerAdapter extends RecyclerView.Adapter<Flashcard
 
     @Override
     public int getItemCount() {
-        return itemCount;
+        return termDefinitionList.size();
+    }
+
+    public void addTermDefinition(FlashcardModel.TermDefinition termDefinition) {
+        termDefinitionList.add(termDefinition);
+        notifyItemInserted(termDefinitionList.size() - 1);
     }
 
     public static class FlashcardViewHolder extends RecyclerView.ViewHolder {

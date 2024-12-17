@@ -8,6 +8,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -29,8 +30,8 @@ public class CreateActivity extends AppCompatActivity {
     private ImageButton saveBtn;
     private FloatingActionButton addBtn;
     private EditText flashcardTitle;
-    private int itemCount;
     private RecyclerView recyclerView;
+    private FlashcardItemRecyclerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,9 @@ public class CreateActivity extends AppCompatActivity {
         addBtn = findViewById(R.id.add_btn);
         saveBtn = findViewById(R.id.save_flashcard);
         recyclerView = findViewById(R.id.flashcard_new_item_rv);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        adapter = new FlashcardItemRecyclerAdapter(context);
+        recyclerView.setAdapter(adapter);
     }
 
     private void returnToPreviousActivity() {
@@ -65,17 +69,21 @@ public class CreateActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // create new flashcard item using flashcard_item.xml
     private void addNewEmptyFlashcardItem() {
-        itemCount++;
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        FlashcardItemRecyclerAdapter adapter = new FlashcardItemRecyclerAdapter(context, itemCount);
-        recyclerView.setAdapter(adapter);
+        adapter.addTermDefinition(new FlashcardModel.TermDefinition("", ""));
     }
 
+    @Nullable
     private FlashcardModel collectFlashcardsData() {
+        // title field validation
+        String title = flashcardTitle.getText().toString().trim();
+        if (title.isEmpty()) {
+            Toast.makeText(context, "Title cannot be empty.", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+
         FlashcardModel flashcard = new FlashcardModel();
-        List<FlashcardModel.TermDefinition> termDefinitions = new ArrayList<>();
+        List<FlashcardModel.TermDefinition> termDefinitionList = new ArrayList<>();
 
         FlashcardItemRecyclerAdapter adapter = (FlashcardItemRecyclerAdapter) recyclerView.getAdapter();
         for (int i = 0; i < adapter.getItemCount(); i++) {
@@ -85,23 +93,37 @@ public class CreateActivity extends AppCompatActivity {
                 String term = flashcardItem.getTermET().getText().toString();
                 String definition = flashcardItem.getDefinitionET().getText().toString();
 
-                termDefinitions.add(new FlashcardModel.TermDefinition(term, definition));
+                // term and definition field validation
+                if (term.isEmpty() || definition.isEmpty()) {
+                    Toast.makeText(context, "Term and definition cannot be empty.", Toast.LENGTH_SHORT).show();
+                    return null;
+                }
+
+                termDefinitionList.add(new FlashcardModel.TermDefinition(term, definition));
             }
         }
 
-        flashcard.setTitle(flashcardTitle.getText().toString());
-        flashcard.setTermDefinitions(termDefinitions);
+        flashcard.setTitle(title);
+        flashcard.setTermDefinitions(termDefinitionList);
 
         return flashcard;
     }
 
     private void saveFlashcard() {
         FlashcardModel flashcardData = collectFlashcardsData();
+
+        // Do not save if validation fails
+        if (flashcardData == null) {
+            return;
+        }
+
         try (DatabaseHelper db = new DatabaseHelper(CreateActivity.this)) {
             boolean success = db.insertFlashcard(flashcardData);
             if (success) {
                 Toast.makeText(this, "Flashcard saved successfully.", Toast.LENGTH_SHORT).show();
             }
         }
+
+        returnToPreviousActivity();
     }
 }
