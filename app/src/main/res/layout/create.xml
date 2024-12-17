@@ -69,18 +69,11 @@
                 android:textSize="@dimen/tv_text_size"/>
         </LinearLayout>
 
-<!--        <LinearLayout-->
-<!--            android:id="@+id/flashcard_container"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical">-->
-
-<!--        </LinearLayout>-->
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/flashcard_new_item_rv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"/>
 
     </LinearLayout>
 
