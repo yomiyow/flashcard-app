@@ -77,17 +77,21 @@ public class CreateActivity extends AppCompatActivity {
 
     @Nullable
     private FlashcardModel collectFlashcardsData() {
-        // title field validation
+        // Validate the title field
         String title = flashcardTitle.getText().toString().trim();
         if (title.isEmpty()) {
             Toast.makeText(context, "Title cannot be empty.", Toast.LENGTH_SHORT).show();
             return null;
         }
 
+        // Ensure there is at least one term-definition
+        if (adapter.getItemCount() == 0) {
+            Toast.makeText(context, "Add at least 1 item.", Toast.LENGTH_SHORT).show();
+            return null;
+        };
+
         FlashcardModel flashcard = new FlashcardModel();
         List<FlashcardModel.TermDefinition> termDefinitionList = new ArrayList<>();
-
-        FlashcardItemRecyclerAdapter adapter = (FlashcardItemRecyclerAdapter) recyclerView.getAdapter();
         for (int i = 0; i < adapter.getItemCount(); i++) {
             RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
             if (viewHolder instanceof FlashcardItemRecyclerAdapter.FlashcardViewHolder) {
@@ -95,7 +99,7 @@ public class CreateActivity extends AppCompatActivity {
                 String term = flashcardItem.getTermET().getText().toString();
                 String definition = flashcardItem.getDefinitionET().getText().toString();
 
-                // term and definition field validation
+                // Ensure there is no empty term-definition
                 if (term.isEmpty() || definition.isEmpty()) {
                     Toast.makeText(context, "Term and definition cannot be empty.", Toast.LENGTH_SHORT).show();
                     return null;

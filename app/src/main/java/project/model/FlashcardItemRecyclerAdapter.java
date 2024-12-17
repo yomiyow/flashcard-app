@@ -33,6 +33,9 @@ public class FlashcardItemRecyclerAdapter extends RecyclerView.Adapter<Flashcard
 
     @Override
     public void onBindViewHolder(@NonNull FlashcardItemRecyclerAdapter.FlashcardViewHolder holder, int position) {
+        FlashcardModel.TermDefinition termDefinition = termDefinitionList.get(position);
+        holder.termET.setText(termDefinition.getTerm());
+        holder.definitionET.setText(termDefinition.getDefinition());
     }
 
     @Override
