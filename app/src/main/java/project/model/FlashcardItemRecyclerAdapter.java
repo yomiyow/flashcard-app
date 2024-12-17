@@ -45,6 +45,11 @@ public class FlashcardItemRecyclerAdapter extends RecyclerView.Adapter<Flashcard
         notifyItemInserted(termDefinitionList.size() - 1);
     }
 
+    public void removeTermDefinition(int position) {
+        termDefinitionList.remove(position);
+        notifyItemRemoved(position);
+    }
+
     public static class FlashcardViewHolder extends RecyclerView.ViewHolder {
 
         private final EditText termET;

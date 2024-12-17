@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -50,6 +51,7 @@ public class CreateActivity extends AppCompatActivity {
         previousAct.setOnClickListener((v) -> returnToPreviousActivity());
         addBtn.setOnClickListener((v) -> addNewEmptyFlashcardItem());
         saveBtn.setOnClickListener((v) -> saveFlashcard());
+        swipeToDelete();
     }
 
     private void initClassVariables() {
@@ -125,5 +127,23 @@ public class CreateActivity extends AppCompatActivity {
         }
 
         returnToPreviousActivity();
+    }
+
+    private void swipeToDelete() {
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                adapter.removeTermDefinition(position);
+            }
+        });
+
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
     }
 }
