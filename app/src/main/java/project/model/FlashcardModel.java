@@ -4,11 +4,13 @@ import java.util.List;
 
 public class FlashcardModel {
 
+    private int flashcardId;
     private String title;
     private List<TermDefinition> termDefinitions;
     private int numberOfTerms;
 
-    public FlashcardModel(String title, int numberOfTerms) {
+    public FlashcardModel(int flashcardId, String title, int numberOfTerms) {
+        this.flashcardId = flashcardId;
         this.title = title;
         this.numberOfTerms = numberOfTerms;
     }
@@ -21,6 +23,10 @@ public class FlashcardModel {
                 "title='" + title + '\'' +
                 ", numberOfTerms=" + numberOfTerms +
                 '}';
+    }
+
+    public int getFlashcardId() {
+        return flashcardId;
     }
 
     public String getTitle() {

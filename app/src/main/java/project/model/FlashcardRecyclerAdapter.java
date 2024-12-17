@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
@@ -41,6 +43,22 @@ public class FlashcardRecyclerAdapter extends RecyclerView.Adapter<FlashcardRecy
         startActivity(context, intent, null);
     }
 
+    // Delete flashcard
+    private void deleteFlashcard(FlashcardModel flashcard, int position) {
+        int flashcardId = flashcard.getFlashcardId();
+
+        try (DatabaseHelper dbHelper = new DatabaseHelper(context)) {
+            boolean success = dbHelper.deleteFlashcard(flashcardId);
+            if (success) {
+                flashcardList.remove(flashcard);
+                notifyItemRemoved(position);
+                Toast.makeText(context, flashcard.getTitle() + " deleted successful..", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "Deletion failed", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     @Override
     public void onBindViewHolder(@NonNull FlashcardRecyclerAdapter.FLashcardViewHolder holder, int position) {
         FlashcardModel flashcard = flashcardList.get(position);
@@ -48,6 +66,7 @@ public class FlashcardRecyclerAdapter extends RecyclerView.Adapter<FlashcardRecy
         holder.numOfTermsTV.setText(flashcard.getNumberOfTerms() + " terms");
 
         holder.itemView.setOnClickListener((v) -> openFlashcard(flashcard));
+        holder.deleteBtn.setOnClickListener((v) -> deleteFlashcard(flashcard, position));
     }
 
     @Override
@@ -59,11 +78,13 @@ public class FlashcardRecyclerAdapter extends RecyclerView.Adapter<FlashcardRecy
 
          private final TextView titleTV;
          private final TextView numOfTermsTV;
+         private final ImageButton deleteBtn;
 
         public FLashcardViewHolder(@NonNull View itemView) {
             super(itemView);
             titleTV = itemView.findViewById(R.id.title);
             numOfTermsTV = itemView.findViewById(R.id.no_of_terms);
+            deleteBtn = itemView.findViewById(R.id.delete_flashcard);
         }
     }
 }

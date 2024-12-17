@@ -149,7 +149,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         try(SQLiteDatabase db = this.getReadableDatabase()) {
             String query =
-                    "SELECT f." + COLUMN_TITLE + ", COUNT(" + COLUMN_TERM + ") AS " + COLUMN_NO_OF_TERMS + " " +
+                    "SELECT " +
+                         "f." + COLUMN_TITLE + ", " +
+                         "COUNT(" + COLUMN_TERM + ") AS " + COLUMN_NO_OF_TERMS + ", " +
+                         "f." + COLUMN_FLASHCARD_ID + " " +
                     "FROM " + TABLE_TERM_DEFINITION + " td " +
                     "INNER JOIN " + TABLE_FLASHCARDS + " f " +
                         "ON td." + COLUMN_FLASHCARD_ID + " = " + "f." + COLUMN_FLASHCARD_ID + " " +
@@ -157,15 +160,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Cursor cursor = db.rawQuery(query, null);
             if (cursor.moveToFirst()) {
                 do {
+                    int flashcardId = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_FLASHCARD_ID));
                     String title = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE));
                     int numberOfTerms = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_NO_OF_TERMS));
-                    returnList.add(new FlashcardModel(title, numberOfTerms));
+                    returnList.add(new FlashcardModel(flashcardId, title, numberOfTerms));
                 } while (cursor.moveToNext());
             }
             cursor.close();
         }
 
         return returnList;
+    }
+
+    public boolean deleteFlashcard(int flashcardId) {
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            db.beginTransaction();
+            try {
+                int flashcardRowsAffected = db.delete(
+                        TABLE_FLASHCARDS,
+                        COLUMN_FLASHCARD_ID + " = ?",
+                        new String[] { String.valueOf(flashcardId) }
+                );
+
+                int termDefinitionRowsAffected = db.delete(
+                        TABLE_TERM_DEFINITION,
+                        COLUMN_FLASHCARD_ID + " = ?",
+                        new String[] { String.valueOf(flashcardId) }
+                );
+
+                if (flashcardRowsAffected > 0 && termDefinitionRowsAffected > 0) {
+                    db.setTransactionSuccessful();
+                    return true;
+                }
+
+                return false;
+            } finally {
+                db.endTransaction();
+            }
+        }
     }
 
     /*====================================================================================
