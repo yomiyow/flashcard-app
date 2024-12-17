@@ -123,7 +123,7 @@ public class CreateActivity extends AppCompatActivity {
             return;
         }
 
-        try (DatabaseHelper db = new DatabaseHelper(CreateActivity.this)) {
+        try (DatabaseHelper db = new DatabaseHelper(context)) {
             boolean success = db.insertFlashcard(flashcardData);
             if (success) {
                 Toast.makeText(this, "Flashcard saved successfully.", Toast.LENGTH_SHORT).show();

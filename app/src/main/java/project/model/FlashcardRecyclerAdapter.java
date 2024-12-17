@@ -9,11 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 import project.authentication.R;
 import project.main.FlashcardOpenActivity;
+import project.main.HomeActivity;
 
 
 public class FlashcardRecyclerAdapter extends RecyclerView.Adapter<FlashcardRecyclerAdapter.FLashcardViewHolder> {
@@ -55,6 +58,11 @@ public class FlashcardRecyclerAdapter extends RecyclerView.Adapter<FlashcardRecy
             } else {
                 Toast.makeText(context, "Deletion failed", Toast.LENGTH_SHORT).show();
             }
+        }
+
+        if (flashcardList.isEmpty()) {
+            ViewSwitcher viewSwitcher = ((HomeActivity) context).findViewById(R.id.home_view_switcher);
+            viewSwitcher.setDisplayedChild(HomeActivity.EMPTY_VIEW);
         }
     }
 

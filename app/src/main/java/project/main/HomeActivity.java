@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageButton;
+import android.widget.ViewSwitcher;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,11 @@ public class HomeActivity extends AppCompatActivity {
 
     private Context context;
     private ImageButton addBtn;
+    private FlashcardRecyclerAdapter adapter;
+    private RecyclerView recyclerView;
+    private ViewSwitcher viewSwitcher;
+    public final static int EMPTY_VIEW = 0;
+    public final static int RECYCLER_VIEW = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +50,9 @@ public class HomeActivity extends AppCompatActivity {
     private void initInstanceVariables() {
         context = HomeActivity.this;
         addBtn = findViewById(R.id.new_flashcard);
+        recyclerView = findViewById(R.id.flashcard_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        viewSwitcher = findViewById(R.id.home_view_switcher);
     }
 
     private void navigateToCreateActivity() {
@@ -52,13 +61,21 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void renderFlashcardsPreview() {
-        RecyclerView recyclerView = findViewById(R.id.flashcard_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-
         try (DatabaseHelper dbHelper = new DatabaseHelper(context)) {
             List<FlashcardModel> flashcardList = dbHelper.getFlashcardTitleAndNumberOfTerms();
-            FlashcardRecyclerAdapter adapter = new FlashcardRecyclerAdapter(context, flashcardList);
+            adapter = new FlashcardRecyclerAdapter(context, flashcardList);
             recyclerView.setAdapter(adapter);
+            checkRecyclerViewContent();
         }
     }
+
+    private void checkRecyclerViewContent() {
+        if (adapter.getItemCount() == 0) {
+            viewSwitcher.setDisplayedChild(EMPTY_VIEW);
+        } else {
+            viewSwitcher.setDisplayedChild(RECYCLER_VIEW);
+        }
+    }
+
+
 }
