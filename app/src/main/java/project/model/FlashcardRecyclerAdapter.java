@@ -38,8 +38,7 @@ public class FlashcardRecyclerAdapter extends RecyclerView.Adapter<FlashcardRecy
     // Open flashcard that has been clicked
     private void openFlashcard(FlashcardModel flashcard) {
         Intent intent = new Intent(context, FlashcardOpenActivity.class);
-        intent.putExtra("flashcardTitle", flashcard.getTitle());
-        intent.putExtra("numberOfTerms", flashcard.getNumberOfTerms() + " terms");
+        intent.putExtra("flashcard", flashcard);
         startActivity(context, intent, null);
     }
 

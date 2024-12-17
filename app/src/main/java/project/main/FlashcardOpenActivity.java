@@ -59,14 +59,13 @@ public class FlashcardOpenActivity extends AppCompatActivity {
         // Set title
         TextView details = findViewById(R.id.details);
         Intent intent = getIntent();
-        String title = intent.getStringExtra("flashcardTitle");
-        String numberOfTerms = intent.getStringExtra("numberOfTerms");
-        details.setText(title + " | " + numberOfTerms);
+        FlashcardModel flashcard = intent.getParcelableExtra("flashcard");
+        details.setText(flashcard.getTitle() + " | " + flashcard.getNumberOfTerms() + " terms");
 
-        // Generate flashcard item
+        // Generate flashcard term-definition
         ViewPager2 viewPager = findViewById(R.id.flashcard_view_pager);
         try (DatabaseHelper dbHelper = new DatabaseHelper(context)) {
-            List<FlashcardModel.TermDefinition> termDefinitionList = dbHelper.getFlashcardTermAndDefinition(title);
+            List<FlashcardModel.TermDefinition> termDefinitionList = dbHelper.getFlashcardTermAndDefinition(flashcard.getFlashcardId());
             FlashcardPagerAdapter adapter = new FlashcardPagerAdapter(context, termDefinitionList);
             viewPager.setAdapter(adapter);
         }
