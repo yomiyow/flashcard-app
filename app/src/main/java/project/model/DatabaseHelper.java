@@ -41,7 +41,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_PASSWORD + " TEXT" +
                 ")";
 
-
         // create term_definition table
         final String CREATE_TABLE_TERM_DEFINITION =
                 "CREATE TABLE " + TABLE_TERM_DEFINITION + " (" +
@@ -156,7 +155,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "FROM " + TABLE_TERM_DEFINITION + " td " +
                     "INNER JOIN " + TABLE_FLASHCARDS + " f " +
                         "ON td." + COLUMN_FLASHCARD_ID + " = " + "f." + COLUMN_FLASHCARD_ID + " " +
-                    "GROUP BY f." + COLUMN_TITLE;
+                    "GROUP BY f." + COLUMN_FLASHCARD_ID;
             Cursor cursor = db.rawQuery(query, null);
             if (cursor.moveToFirst()) {
                 do {
@@ -201,7 +200,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /*====================================================================================
-                                FlashcardOpen Activity Queries
+                       FlashcardOpenActivity/EditActivity Queries
     ====================================================================================*/
 
     public List<FlashcardModel.TermDefinition> getFlashcardTermAndDefinition(int flashcardId) {
@@ -209,7 +208,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         try(SQLiteDatabase db = this.getReadableDatabase()) {
             String query =
-                    "SELECT " + COLUMN_TERM + ", " + COLUMN_DEFINITION + " " +
+                    "SELECT " + COLUMN_TERM_DEFINITION_ID + ", " + COLUMN_TERM + ", " + COLUMN_DEFINITION + " " +
                     "FROM " + TABLE_TERM_DEFINITION + " td " +
                     "INNER JOIN " + TABLE_FLASHCARDS + " f " +
                         "ON td." + COLUMN_FLASHCARD_ID + " = " + "f." + COLUMN_FLASHCARD_ID + " " +
@@ -217,14 +216,66 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Cursor cursor = db.rawQuery(query, new String[] {String.valueOf(flashcardId)});
             if (cursor.moveToFirst()) {
                 do {
+                    int termDefinitionId = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_TERM_DEFINITION_ID));
                     String term = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TERM));
                     String definition = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DEFINITION));
-                    returnList.add(new FlashcardModel.TermDefinition(term, definition));
+                    returnList.add(new FlashcardModel.TermDefinition(termDefinitionId, term, definition));
                 } while (cursor.moveToNext());
             }
             cursor.close();
         }
 
         return returnList;
+    }
+
+    /*====================================================================================
+                                    EditActivity Queries
+    ====================================================================================*/
+
+    public boolean updateFlashcard(FlashcardModel flashcard) {
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            db.beginTransaction();
+            try {
+                // Update the flashcard title
+                ContentValues flashcardValues = new ContentValues();
+                flashcardValues.put(COLUMN_TITLE, flashcard.getTitle());
+                int rowsAffected = db.update(
+                        TABLE_FLASHCARDS,
+                        flashcardValues,
+                        COLUMN_FLASHCARD_ID + " = ?",
+                        new String[] { String.valueOf(flashcard.getFlashcardId()) }
+                );
+
+                if (rowsAffected == 0) {
+                    return false;
+                }
+
+                // Insert or update the term definitions
+                for (FlashcardModel.TermDefinition termDefinition : flashcard.getTermDefinitions()) {
+                    ContentValues termDefValues = new ContentValues();
+                    termDefValues.put(COLUMN_FLASHCARD_ID, flashcard.getFlashcardId());
+                    termDefValues.put(COLUMN_TERM, termDefinition.getTerm());
+                    termDefValues.put(COLUMN_DEFINITION, termDefinition.getDefinition());
+                    // Update existing term definition
+                    db.update(
+                            TABLE_TERM_DEFINITION,
+                            termDefValues,
+                            COLUMN_FLASHCARD_ID + " = ? AND " + COLUMN_TERM_DEFINITION_ID + " = ?",
+                            new String[] {
+                                    String.valueOf(flashcard.getFlashcardId()),
+                                    String.valueOf(termDefinition.getTermDefinitionId())
+                            }
+                    );
+
+//                  db.insert(TABLE_TERM_DEFINITION, null, termDefValues);
+
+                }
+
+                db.setTransactionSuccessful();
+                return true;
+            } finally {
+                db.endTransaction();
+            }
+        }
     }
 }

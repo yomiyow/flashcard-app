@@ -14,18 +14,57 @@ public class FlashcardModel implements Parcelable {
     private List<TermDefinition> termDefinitions;
     private int numberOfTerms;
 
+    public FlashcardModel(int flashcardId, String title, List<TermDefinition> termDefinitions, int numberOfTerms) {
+        this.flashcardId = flashcardId;
+        this.title = title;
+        this.termDefinitions = termDefinitions;
+        this.numberOfTerms = numberOfTerms;
+    }
+
     public FlashcardModel(int flashcardId, String title, int numberOfTerms) {
         this.flashcardId = flashcardId;
         this.title = title;
         this.numberOfTerms = numberOfTerms;
     }
 
-    public FlashcardModel() {}
-
     protected FlashcardModel(Parcel in) {
         flashcardId = in.readInt();
         title = in.readString();
         numberOfTerms = in.readInt();
+    }
+
+    public FlashcardModel() {}
+
+    public int getFlashcardId() {
+        return flashcardId;
+    }
+
+    public void setFlashcardId(int flashcardId) {
+        this.flashcardId = flashcardId;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public List<TermDefinition> getTermDefinitions() {
+        return this.termDefinitions;
+    }
+
+    public void setTermDefinitions(List<TermDefinition> termDefinitions) {
+        this.termDefinitions = termDefinitions;
+    }
+
+    public int getNumberOfTerms() {
+        return numberOfTerms;
+    }
+
+    public void setNumberOfTerms(int numberOfTerms) {
+        this.numberOfTerms = numberOfTerms;
     }
 
     public static final Creator<FlashcardModel> CREATOR = new Creator<FlashcardModel>() {
@@ -55,40 +94,23 @@ public class FlashcardModel implements Parcelable {
     @Override
     public String toString() {
         return "FlashcardModel{" +
-                "title='" + title + '\'' +
-                ", numberOfTerms=" + numberOfTerms +
+                "termDefinitions=" + termDefinitions +
                 ", flashcardId=" + flashcardId +
                 '}';
     }
 
-    public int getFlashcardId() {
-        return flashcardId;
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public List<TermDefinition> getTermDefinitions() {
-        return this.termDefinitions;
-    }
-
-    public void setTermDefinitions(List<TermDefinition> termDefinitions) {
-        this.termDefinitions = termDefinitions;
-    }
-
-    public int getNumberOfTerms() {
-        return numberOfTerms;
-    }
-
     // Inner class
     public static class TermDefinition {
+
+        private int termDefinitionId;
         private String term;
         private String definition;
+
+        public TermDefinition(int termDefinitionId, String term, String definition) {
+            this.termDefinitionId = termDefinitionId;
+            this.term = term;
+            this.definition = definition;
+        }
 
         public TermDefinition(String term, String definition) {
             this.term = term;
@@ -98,9 +120,18 @@ public class FlashcardModel implements Parcelable {
         @Override
         public String toString() {
             return "TermDefinition{" +
-                    "term='" + term + '\'' +
+                    "id='" + termDefinitionId + '\'' +
+                    ", term='" + term + '\'' +
                     ", definition='" + definition + '\'' +
                     '}';
+        }
+
+        public int getTermDefinitionId() {
+            return termDefinitionId;
+        }
+
+        public void setTermDefinitionId(int termDefinitionId) {
+            this.termDefinitionId = termDefinitionId;
         }
 
         public String getTerm() {

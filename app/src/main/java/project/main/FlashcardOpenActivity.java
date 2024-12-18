@@ -70,7 +70,6 @@ public class FlashcardOpenActivity extends AppCompatActivity {
     private void renderFlashcardItems() {
         // Set title
         TextView details = findViewById(R.id.details);
-        Intent intent = getIntent();
         details.setText(MessageFormat.format("{0} | {1} terms", flashcard.getTitle(), flashcard.getNumberOfTerms()));
 
         // Generate flashcard term-definition
