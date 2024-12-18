@@ -32,7 +32,7 @@
             android:layout_weight="1" />
 
         <ImageButton
-            android:id="@+id/save_flashcard"
+            android:id="@+id/edit_flashcard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/edit_icon"

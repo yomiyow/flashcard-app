@@ -57,6 +57,7 @@ public class FlashcardModel implements Parcelable {
         return "FlashcardModel{" +
                 "title='" + title + '\'' +
                 ", numberOfTerms=" + numberOfTerms +
+                ", flashcardId=" + flashcardId +
                 '}';
     }
 

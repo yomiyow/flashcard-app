@@ -17,6 +17,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import project.authentication.R;
@@ -28,6 +29,8 @@ public class FlashcardOpenActivity extends AppCompatActivity {
 
     private Context context;
     private ImageButton previousAct;
+    private ImageButton editAct;
+    private FlashcardModel flashcard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +45,15 @@ public class FlashcardOpenActivity extends AppCompatActivity {
 
         initInstanceVariables();
         previousAct.setOnClickListener((v) -> returnToHomeActivity());
+        editAct.setOnClickListener((v) -> navigateToEditActivity());
         renderFlashcardItems();
     }
 
     private void initInstanceVariables() {
         context = FlashcardOpenActivity.this;
         previousAct = findViewById(R.id.previous_activity);
+        editAct = findViewById(R.id.edit_flashcard);
+        flashcard = getIntent().getParcelableExtra("flashcard");
     }
 
     private void returnToHomeActivity() {
@@ -55,12 +61,17 @@ public class FlashcardOpenActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void navigateToEditActivity() {
+        Intent intent = new Intent(context, EditActivity.class);
+        intent.putExtra("flashcard", flashcard);
+        startActivity(intent);
+    }
+
     private void renderFlashcardItems() {
         // Set title
         TextView details = findViewById(R.id.details);
         Intent intent = getIntent();
-        FlashcardModel flashcard = intent.getParcelableExtra("flashcard");
-        details.setText(flashcard.getTitle() + " | " + flashcard.getNumberOfTerms() + " terms");
+        details.setText(MessageFormat.format("{0} | {1} terms", flashcard.getTitle(), flashcard.getNumberOfTerms()));
 
         // Generate flashcard term-definition
         ViewPager2 viewPager = findViewById(R.id.flashcard_view_pager);
