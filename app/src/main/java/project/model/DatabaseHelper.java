@@ -256,8 +256,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     termDefValues.put(COLUMN_FLASHCARD_ID, flashcard.getFlashcardId());
                     termDefValues.put(COLUMN_TERM, termDefinition.getTerm());
                     termDefValues.put(COLUMN_DEFINITION, termDefinition.getDefinition());
+
                     // Update existing term definition
-                    db.update(
+                    int termDefRowsAffected = db.update(
                             TABLE_TERM_DEFINITION,
                             termDefValues,
                             COLUMN_FLASHCARD_ID + " = ? AND " + COLUMN_TERM_DEFINITION_ID + " = ?",
@@ -267,8 +268,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             }
                     );
 
-//                  db.insert(TABLE_TERM_DEFINITION, null, termDefValues);
-
+                    // if data not exist, insert it
+                    if (termDefRowsAffected == 0) {
+                        db.insert(TABLE_TERM_DEFINITION, null, termDefValues);
+                    }
                 }
 
                 db.setTransactionSuccessful();

@@ -84,6 +84,7 @@ public class EditActivity extends AppCompatActivity {
     @Nullable
     private FlashcardModel collectUpdatedFlashcardsData() {
         List<FlashcardModel.TermDefinition> termDefinitionList = new ArrayList<>();
+
         for (int i = 0; i < adapter.getItemCount(); i++) {
             RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
             if (viewHolder instanceof EditItemRecyclerAdapter.FlashcardViewHolder) {
@@ -92,15 +93,19 @@ public class EditActivity extends AppCompatActivity {
                 String term = flashcardItem.getTermET().getText().toString();
                 String definition = flashcardItem.getDefinitionET().getText().toString();
 
+                System.out.println(String.valueOf(termDefinitionId) + " " + term + " " + definition);
+
                 // Ensure there is no empty term-definition
                 if (term.isEmpty() || definition.isEmpty()) {
                     Toast.makeText(context, "Term and definition cannot be empty.", Toast.LENGTH_SHORT).show();
-                    return null;
+                    throw new IllegalArgumentException("Term Definition cannot be empty");
                 }
 
                 termDefinitionList.add(new FlashcardModel.TermDefinition(termDefinitionId, term, definition));
             }
         }
+
+        System.out.println(termDefinitionList.toString());
 
         String title = flashcardTitle.getText().toString().trim();
         FlashcardModel updatedFlashcard = new FlashcardModel();
@@ -108,7 +113,7 @@ public class EditActivity extends AppCompatActivity {
         updatedFlashcard.setTitle(title);
         updatedFlashcard.setTermDefinitions(termDefinitionList);
         updatedFlashcard.setNumberOfTerms(this.flashcard.getNumberOfTerms());
-        
+
         return updatedFlashcard;
     }
 
@@ -126,10 +131,11 @@ public class EditActivity extends AppCompatActivity {
             return;
         };
 
-        // Do not save if validation fails
-        FlashcardModel updatedFlashcardData = collectUpdatedFlashcardsData();
-        System.out.println(updatedFlashcardData.toString());
-        if (updatedFlashcardData == null) {
+        // Do not save if term or definition is empty
+        FlashcardModel updatedFlashcardData;
+        try {
+            updatedFlashcardData = collectUpdatedFlashcardsData();
+        } catch (IllegalArgumentException ex) {
             return;
         }
 
