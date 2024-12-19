@@ -3,9 +3,10 @@ package project.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -45,7 +46,9 @@ public class EditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.edit_main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            findViewById(R.id.flashcard_new_item_rv).setPadding(0, 0, 0, imeInsets.bottom);
             return insets;
         });
 
@@ -54,6 +57,7 @@ public class EditActivity extends AppCompatActivity {
         addBtn.setOnClickListener((v) -> addNewEmptyFlashcardItem());
         checkBtn.setOnClickListener((v) -> saveFlashcard());
         swipeToDelete();
+        hideKeyboardWhenScrolling();
     }
 
     private void initInstanceVariables() {
@@ -175,5 +179,21 @@ public class EditActivity extends AppCompatActivity {
             var termDefinitionList = dbHelper.getFlashcardTermAndDefinition(flashcardId);
             adapter.setTermDefinitionList(termDefinitionList);
         }
+    }
+
+    private void hideKeyboardWhenScrolling() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    View view = getCurrentFocus();
+                    if (view != null) {
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                }
+            }
+        });
     }
 }

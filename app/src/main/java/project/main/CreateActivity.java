@@ -3,6 +3,8 @@ package project.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -56,6 +58,7 @@ public class CreateActivity extends AppCompatActivity {
         addBtn.setOnClickListener((v) -> addNewEmptyFlashcardItem());
         checkBtn.setOnClickListener((v) -> saveFlashcard());
         swipeToDelete();
+        hideKeyboardWhenScrolling();
     }
 
     private void initClassVariables() {
@@ -147,6 +150,22 @@ public class CreateActivity extends AppCompatActivity {
         });
 
         itemTouchHelper.attachToRecyclerView(recyclerView);
+    }
 
+    private void hideKeyboardWhenScrolling() {
+        // Hide keyboard when scrolling
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    View view = getCurrentFocus();
+                    if (view != null) {
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                }
+            }
+        });
     }
 }
