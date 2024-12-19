@@ -1,12 +1,14 @@
 package project.model;
 
+import androidx.annotation.NonNull;
+
 public class UserModel {
 
     private String email;
     private String username;
     private String password;
 
-    public UserModel(String email, String username, String password) {
+    public UserModel(@NonNull String email, String username, String password) {
         if (email.isEmpty() || username.isEmpty() || password.isEmpty()) {
             throw new IllegalArgumentException("All fields are required!");
         }
@@ -15,7 +17,7 @@ public class UserModel {
         this.password = password;
     }
 
-    public UserModel(String email, String password) {
+    public UserModel(@NonNull String email, String password) {
         if (email.isEmpty() || password.isEmpty()) {
             throw new IllegalArgumentException("All fields are required!");
         }

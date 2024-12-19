@@ -2,24 +2,30 @@ package project.authentication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Toast;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
 import project.main.HomeActivity;
 import project.model.DatabaseHelper;
 import project.model.UserModel;
+import project.utils.ToastUtil;
 
 public class LoginActivity extends AppCompatActivity {
 
     private Context context;
     private EditText emailEdiText, passwordEditText;
     private Button signupLink, loginBtn;
+    private CheckBox showPasswordBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         initInstanceVariables();
         loginActionPerformed();
         signupLinkActionPerformed();
+        showPasswordActionPerformed();
     }
 
 
@@ -44,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.password_et);
         signupLink = findViewById(R.id.signup_link);
         loginBtn = findViewById(R.id.login_btn);
+        showPasswordBtn = findViewById(R.id.show_password_cb);
     }
 
     private void loginActionPerformed() {
@@ -52,17 +60,16 @@ public class LoginActivity extends AppCompatActivity {
                 String email = emailEdiText.getText().toString().trim();
                 String password = passwordEditText.getText().toString().trim();
                 UserModel user = new UserModel(email, password);
-
                 boolean accountExist = database.loginUser(user);
                 if (!accountExist) {
-                    Toast.makeText(this, "Account not found!", Toast.LENGTH_SHORT).show();
+                    ToastUtil.showToast(context, "Account Not Found!");
                     return;
                 }
 
                 Intent intent = new Intent(context, HomeActivity.class);
                 startActivity(intent);
             } catch (IllegalArgumentException e) {
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                ToastUtil.showToast(context, e.getMessage());
             }
         });
     }
@@ -71,6 +78,17 @@ public class LoginActivity extends AppCompatActivity {
         signupLink.setOnClickListener((v) -> {
             Intent intent = new Intent(context, SignupActivity.class);
             startActivity(intent);
+        });
+    }
+
+    private void showPasswordActionPerformed() {
+        showPasswordBtn.setOnClickListener((v) -> {
+            if (showPasswordBtn.isChecked()) {
+                passwordEditText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            } else {
+                passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                passwordEditText.setTypeface(Typeface.DEFAULT);
+            }
         });
     }
 }
