@@ -14,7 +14,6 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import java.text.MessageFormat;
-import java.util.List;
 
 import project.authentication.R;
 import project.model.DatabaseHelper;
@@ -24,8 +23,8 @@ import project.model.FlashcardPagerAdapter;
 public class FlashcardOpenActivity extends AppCompatActivity {
 
     private Context context;
-    private ImageButton previousAct;
-    private ImageButton editAct;
+    private ImageButton leftArrowBtn;
+    private ImageButton editBtn;
     private FlashcardModel flashcard;
 
     @Override
@@ -40,25 +39,25 @@ public class FlashcardOpenActivity extends AppCompatActivity {
         });
 
         initInstanceVariables();
-        previousAct.setOnClickListener((v) -> returnToHomeActivity());
-        editAct.setOnClickListener((v) -> navigateToEditActivity());
+        leftArrowBtn.setOnClickListener((v) -> returnToHomeActivity());
+        editBtn.setOnClickListener((v) -> navigateToEditActivity());
         renderFlashcardItems();
     }
 
     private void initInstanceVariables() {
         context = FlashcardOpenActivity.this;
-        previousAct = findViewById(R.id.previous_activity);
-        editAct = findViewById(R.id.edit_flashcard);
+        leftArrowBtn = findViewById(R.id.previous_activity);
+        editBtn = findViewById(R.id.edit_flashcard);
         flashcard = getIntent().getParcelableExtra("flashcard");
     }
 
     private void returnToHomeActivity() {
-        Intent intent = new Intent(context, HomeActivity.class);
+        var intent = new Intent(context, HomeActivity.class);
         startActivity(intent);
     }
 
     private void navigateToEditActivity() {
-        Intent intent = new Intent(context, EditActivity.class);
+        var intent = new Intent(context, EditActivity.class);
         intent.putExtra("flashcard", flashcard);
         startActivity(intent);
     }
@@ -68,11 +67,11 @@ public class FlashcardOpenActivity extends AppCompatActivity {
         TextView details = findViewById(R.id.details);
         details.setText(MessageFormat.format("{0} | {1} terms", flashcard.getTitle(), flashcard.getNumberOfTerms()));
 
-        // Generate flashcard term-definition
+        // Fetch flashcard data from database and save it to adapter
         ViewPager2 viewPager = findViewById(R.id.flashcard_view_pager);
-        try (DatabaseHelper dbHelper = new DatabaseHelper(context)) {
-            List<FlashcardModel.TermDefinition> termDefinitionList = dbHelper.getFlashcardTermAndDefinition(flashcard.getFlashcardId());
-            FlashcardPagerAdapter adapter = new FlashcardPagerAdapter(context, termDefinitionList);
+        try (var dbHelper = new DatabaseHelper(context)) {
+            var termDefinitionList = dbHelper.getFlashcardTermAndDefinition(flashcard.getFlashcardId());
+            var adapter = new FlashcardPagerAdapter(context, termDefinitionList);
             viewPager.setAdapter(adapter);
         }
     }

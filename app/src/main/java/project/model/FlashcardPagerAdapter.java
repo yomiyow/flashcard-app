@@ -27,15 +27,15 @@ public class FlashcardPagerAdapter extends RecyclerView.Adapter<FlashcardPagerAd
     @NonNull
     @Override
     public FlashcardPagerAdapter.FlashcardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View flashcardItem = inflater.inflate(R.layout.flashcard_view_pager_item, parent, false);
+        var inflater = LayoutInflater.from(context);
+        var flashcardItem = inflater.inflate(R.layout.flashcard_view_pager_item, parent, false);
 
         return new FlashcardViewHolder(flashcardItem);
     }
 
     private void flipCard(View front, View back) {
-        AnimatorSet flipOut = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.animator.flip_out);
-        AnimatorSet flipIn = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.animator.flip_in);
+        var flipOut = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.animator.flip_out);
+        var flipIn = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.animator.flip_in);
 
         flipOut.setTarget(front);
         flipIn.setTarget(back);
@@ -52,19 +52,24 @@ public class FlashcardPagerAdapter extends RecyclerView.Adapter<FlashcardPagerAd
         });
     }
 
+    private void toggleFlashcardVisibility(FlashcardPagerAdapter.FlashcardViewHolder holder) {
+        var term = holder.termTV;
+        var definition = holder.definitionTV;
+        boolean isTermVisible = holder.termTV.getVisibility() == View.VISIBLE;
+        if (isTermVisible) {
+            flipCard(term, definition);
+        } else {
+            flipCard(definition, term);
+        }
+    }
+
     @Override
     public void onBindViewHolder(@NonNull FlashcardPagerAdapter.FlashcardViewHolder holder, int position) {
-        FlashcardModel.TermDefinition termDefinition = termDefinitionList.get(position);
+        var termDefinition = termDefinitionList.get(position);
         holder.termTV.setText(termDefinition.getTerm());
         holder.definitionTV.setText(termDefinition.getDefinition());
 
-        holder.itemView.setOnClickListener((v) -> {
-            if (holder.termTV.getVisibility() == View.VISIBLE) {
-                flipCard(holder.termTV, holder.definitionTV);
-            } else {
-                flipCard(holder.definitionTV, holder.termTV);
-            }
-        });
+        holder.itemView.setOnClickListener((v) -> toggleFlashcardVisibility(holder));
     }
 
     @Override
