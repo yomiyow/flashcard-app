@@ -12,28 +12,28 @@ import java.util.List;
 
 import project.authentication.R;
 
-public class FlashcardItemRecyclerAdapter extends RecyclerView.Adapter<FlashcardItemRecyclerAdapter.FlashcardViewHolder> {
+public class FlashcardItemAdapter extends RecyclerView.Adapter<FlashcardItemAdapter.FlashcardViewHolder> {
 
     private final Context context;
     private final List<FlashcardModel.TermDefinition> termDefinitionList;
 
-    public FlashcardItemRecyclerAdapter(Context context) {
+    public FlashcardItemAdapter(Context context) {
         this.context = context;
         this.termDefinitionList = new ArrayList<>();
     }
 
     @NonNull
     @Override
-    public FlashcardItemRecyclerAdapter.FlashcardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View flashcardItem = inflater.inflate(R.layout.flashcard_new_item, parent, false);
+    public FlashcardItemAdapter.FlashcardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        var inflater = LayoutInflater.from(context);
+        var flashcardItem = inflater.inflate(R.layout.flashcard_new_item, parent, false);
 
         return new FlashcardViewHolder(flashcardItem);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FlashcardItemRecyclerAdapter.FlashcardViewHolder holder, int position) {
-        FlashcardModel.TermDefinition termDefinition = termDefinitionList.get(position);
+    public void onBindViewHolder(@NonNull FlashcardItemAdapter.FlashcardViewHolder holder, int position) {
+        var termDefinition = termDefinitionList.get(position);
         holder.termET.setText(termDefinition.getTerm());
         holder.definitionET.setText(termDefinition.getDefinition());
     }

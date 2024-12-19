@@ -2,9 +2,7 @@ package project.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import androidx.annotation.NonNull;
-
 import java.util.List;
 
 public class FlashcardModel implements Parcelable {
@@ -25,6 +23,11 @@ public class FlashcardModel implements Parcelable {
         this.flashcardId = flashcardId;
         this.title = title;
         this.numberOfTerms = numberOfTerms;
+    }
+
+    public FlashcardModel(String title, List<TermDefinition> termDefinitions) {
+        this.title = title;
+        this.termDefinitions = termDefinitions;
     }
 
     protected FlashcardModel(Parcel in) {

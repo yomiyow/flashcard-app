@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
+
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,23 +16,27 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import project.authentication.R;
 import project.model.DatabaseHelper;
-import project.model.FlashcardItemRecyclerAdapter;
+import project.model.FlashcardItemAdapter;
 import project.model.FlashcardModel;
+import project.utils.ToastUtil;
 
 public class CreateActivity extends AppCompatActivity {
 
     private Context context;
-    private ImageButton previousAct;
-    private ImageButton saveBtn;
+    private ImageButton leftArrowBtn;
+    private ImageButton checkBtn;
     private FloatingActionButton addBtn;
     private EditText flashcardTitle;
     private RecyclerView recyclerView;
-    private FlashcardItemRecyclerAdapter adapter;
+    private FlashcardItemAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,26 +52,26 @@ public class CreateActivity extends AppCompatActivity {
         initClassVariables();
         // add 1 empty item as default
         addNewEmptyFlashcardItem();
-        previousAct.setOnClickListener((v) -> returnToPreviousActivity());
+        leftArrowBtn.setOnClickListener((v) -> returnToPreviousActivity());
         addBtn.setOnClickListener((v) -> addNewEmptyFlashcardItem());
-        saveBtn.setOnClickListener((v) -> saveFlashcard());
+        checkBtn.setOnClickListener((v) -> saveFlashcard());
         swipeToDelete();
     }
 
     private void initClassVariables() {
         context = CreateActivity.this;
         flashcardTitle = findViewById(R.id.flashcard_title);
-        previousAct = findViewById(R.id.previous_activity);
+        leftArrowBtn = findViewById(R.id.previous_activity);
         addBtn = findViewById(R.id.add_btn);
-        saveBtn = findViewById(R.id.save_flashcard);
+        checkBtn = findViewById(R.id.save_flashcard);
         recyclerView = findViewById(R.id.flashcard_new_item_rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        adapter = new FlashcardItemRecyclerAdapter(context);
+        adapter = new FlashcardItemAdapter(context);
         recyclerView.setAdapter(adapter);
     }
 
     private void returnToPreviousActivity() {
-        Intent intent = new Intent(CreateActivity.this, HomeActivity.class);
+        var intent = new Intent(context, HomeActivity.class);
         startActivity(intent);
     }
 
@@ -80,53 +84,48 @@ public class CreateActivity extends AppCompatActivity {
         // Validate the title field
         String title = flashcardTitle.getText().toString().trim();
         if (title.isEmpty()) {
-            Toast.makeText(context, "Title cannot be empty.", Toast.LENGTH_SHORT).show();
+            ToastUtil.showToast(context, "Title cannot be empty.");
             return null;
         }
 
         // Ensure there is at least one term-definition
         if (adapter.getItemCount() == 0) {
-            Toast.makeText(context, "Add at least 1 item.", Toast.LENGTH_SHORT).show();
+            ToastUtil.showToast(context, "Add at least 1 item.");
             return null;
         };
 
-        FlashcardModel flashcard = new FlashcardModel();
         List<FlashcardModel.TermDefinition> termDefinitionList = new ArrayList<>();
         for (int i = 0; i < adapter.getItemCount(); i++) {
-            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
-            if (viewHolder instanceof FlashcardItemRecyclerAdapter.FlashcardViewHolder) {
-                FlashcardItemRecyclerAdapter.FlashcardViewHolder flashcardItem = (FlashcardItemRecyclerAdapter.FlashcardViewHolder) viewHolder;
-                String term = flashcardItem.getTermET().getText().toString();
-                String definition = flashcardItem.getDefinitionET().getText().toString();
+            var viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
+            if (viewHolder instanceof FlashcardItemAdapter.FlashcardViewHolder) {
+                var flashcardViewHolder = (FlashcardItemAdapter.FlashcardViewHolder) viewHolder;
+                String term = flashcardViewHolder.getTermET().getText().toString();
+                String definition = flashcardViewHolder.getDefinitionET().getText().toString();
 
                 // Ensure there is no empty term-definition
                 if (term.isEmpty() || definition.isEmpty()) {
-                    Toast.makeText(context, "Term and definition cannot be empty.", Toast.LENGTH_SHORT).show();
+                    ToastUtil.showToast(context, "Term and definition cannot be empty.");
                     return null;
                 }
 
+                // Store each term-definition data
                 termDefinitionList.add(new FlashcardModel.TermDefinition(term, definition));
             }
         }
 
-        flashcard.setTitle(title);
-        flashcard.setTermDefinitions(termDefinitionList);
-
-        return flashcard;
+        return new FlashcardModel(title, termDefinitionList);
     }
 
     private void saveFlashcard() {
-        FlashcardModel flashcardData = collectFlashcardsData();
+        var flashcardData = collectFlashcardsData();
 
         // Do not save if validation fails
-        if (flashcardData == null) {
-            return;
-        }
+        if (flashcardData == null) { return; }
 
-        try (DatabaseHelper db = new DatabaseHelper(context)) {
+        try (var db = new DatabaseHelper(context)) {
             boolean success = db.insertFlashcard(flashcardData);
             if (success) {
-                Toast.makeText(this, "Flashcard saved successfully.", Toast.LENGTH_SHORT).show();
+                ToastUtil.showToast(context, "Flashcard saved successfully.");
             }
         }
 
@@ -134,7 +133,7 @@ public class CreateActivity extends AppCompatActivity {
     }
 
     private void swipeToDelete() {
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+        var itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
