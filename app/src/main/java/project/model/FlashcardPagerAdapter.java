@@ -28,7 +28,7 @@ public class FlashcardPagerAdapter extends RecyclerView.Adapter<FlashcardPagerAd
     @Override
     public FlashcardPagerAdapter.FlashcardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View flashcardItem = inflater.inflate(R.layout.flascard_item, parent, false);
+        View flashcardItem = inflater.inflate(R.layout.flashcard_view_pager_item, parent, false);
 
         return new FlashcardViewHolder(flashcardItem);
     }

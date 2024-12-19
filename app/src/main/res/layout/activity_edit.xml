@@ -2,10 +2,10 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/create_main"
+    android:id="@+id/edit_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="project.main.CreateActivity"
+    tools:context="project.main.EditActivity"
     android:background="@color/white">
 
     <LinearLayout
@@ -23,14 +23,13 @@
             android:paddingLeft="0dp"
             android:paddingRight="8dp">
 
-            <ImageButton
-                android:id="@+id/previous_activity"
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/left_arrow_icon"
-                android:background="@null"
-                android:layout_gravity="center_vertical"
-                tools:ignore="ContentDescription" />
+                android:layout_weight="1"
+                android:text="@string/edit_flashcard"
+                android:textSize="24sp"
+                android:layout_gravity="center_vertical"/>
 
             <View
                 android:layout_width="0dp"
@@ -41,7 +40,7 @@
                 android:id="@+id/save_flashcard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/check_icon"
+                android:src="@drawable/ic_check"
                 android:background="@null"
                 android:layout_gravity="center_vertical"
                 tools:ignore="ContentDescription" />
@@ -87,5 +86,5 @@
         android:contentDescription="Add"
         android:tint="@color/white"
         android:backgroundTint="@color/primary_text_color"
-        app:srcCompat="@drawable/add_icon" />
+        app:srcCompat="@drawable/ic_plus" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

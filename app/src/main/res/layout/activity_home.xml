@@ -27,7 +27,7 @@
             android:id="@+id/new_flashcard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/add_icon"
+            android:src="@drawable/ic_plus"
             android:background="@null"
             android:layout_gravity="center_vertical"
             tools:ignore="ContentDescription" />
