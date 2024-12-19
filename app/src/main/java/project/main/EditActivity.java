@@ -6,9 +6,9 @@ import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -16,22 +16,26 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import project.authentication.R;
 import project.model.DatabaseHelper;
-import project.model.EditItemRecyclerAdapter;
+import project.model.EditItemAdapter;
 import project.model.FlashcardModel;
+import project.utils.ToastUtil;
 
 public class EditActivity extends AppCompatActivity {
 
     private Context context;
-    private ImageButton saveBtn;
+    private ImageButton checkBtn;
     private FloatingActionButton addBtn;
-    private EditText flashcardTitle;
+    private EditText titleTextView;
     private RecyclerView recyclerView;
-    private EditItemRecyclerAdapter adapter;
+    private EditItemAdapter adapter;
     private FlashcardModel flashcard;
 
     @Override
@@ -48,19 +52,19 @@ public class EditActivity extends AppCompatActivity {
         initInstanceVariables();
         populateTermDefinitions();
         addBtn.setOnClickListener((v) -> addNewEmptyFlashcardItem());
-        saveBtn.setOnClickListener((v) -> saveFlashcard());
+        checkBtn.setOnClickListener((v) -> saveFlashcard());
         swipeToDelete();
     }
 
     private void initInstanceVariables() {
         context = EditActivity.this;
-        flashcardTitle = findViewById(R.id.flashcard_title);
+        titleTextView = findViewById(R.id.flashcard_title);
         addBtn = findViewById(R.id.add_btn);
-        saveBtn = findViewById(R.id.save_flashcard);
+        checkBtn = findViewById(R.id.save_flashcard);
         recyclerView = findViewById(R.id.flashcard_new_item_rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         flashcard = getIntent().getParcelableExtra("flashcard");
-        adapter = new EditItemRecyclerAdapter(context);
+        adapter = new EditItemAdapter(context);
         recyclerView.setAdapter(adapter);
     }
 
@@ -69,24 +73,23 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void returnToPreviousActivity() {
-        Intent intent = new Intent(context, FlashcardOpenActivity.class);
-        FlashcardModel updatedFlashcard = collectUpdatedFlashcardsData();
+        var intent = new Intent(context, FlashcardOpenActivity.class);
+        var updatedFlashcard = collectUpdatedFlashcardsData();
         intent.putExtra("flashcard", updatedFlashcard);
         startActivity(intent);
     }
 
-    @Nullable
+    @NonNull
     private FlashcardModel collectUpdatedFlashcardsData() {
         List<FlashcardModel.TermDefinition> termDefinitionList = new ArrayList<>();
 
         for (int i = 0; i < adapter.getItemCount(); i++) {
-            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
-            if (viewHolder instanceof EditItemRecyclerAdapter.FlashcardViewHolder) {
-                EditItemRecyclerAdapter.FlashcardViewHolder flashcardItem = (EditItemRecyclerAdapter.FlashcardViewHolder) viewHolder;
-                int termDefinitionId = flashcardItem.getTermDefinitionId();
-
-                String term = flashcardItem.getTermET().getText().toString();
-                String definition = flashcardItem.getDefinitionET().getText().toString();
+            var viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
+            if (viewHolder instanceof EditItemAdapter.FlashcardViewHolder) {
+                var flashcardViewHolder = (EditItemAdapter.FlashcardViewHolder) viewHolder;
+                int termDefinitionId = flashcardViewHolder.getTermDefinitionId();
+                String term = flashcardViewHolder.getTermET().getText().toString();
+                String definition = flashcardViewHolder.getDefinitionET().getText().toString();
 
                 // Ensure there is no empty term-definition
                 if (term.isEmpty() || definition.isEmpty()) {
@@ -97,29 +100,26 @@ public class EditActivity extends AppCompatActivity {
             }
         }
 
-        // save update flashcard data and return it
-        String title = flashcardTitle.getText().toString().trim();
-        FlashcardModel updatedFlashcard = new FlashcardModel();
-        updatedFlashcard.setFlashcardId(this.flashcard.getFlashcardId());
-        updatedFlashcard.setTitle(title);
-        updatedFlashcard.setTermDefinitions(termDefinitionList);
-        updatedFlashcard.setNumberOfTerms(this.flashcard.getNumberOfTerms());
-        updatedFlashcard.setNumberOfTerms(termDefinitionList.size());
-
-        return updatedFlashcard;
+        // save updated flashcard data and return it
+        return new FlashcardModel(
+                this.flashcard.getFlashcardId(),
+                titleTextView.getText().toString().trim(),
+                termDefinitionList,
+                termDefinitionList.size()
+        );
     }
 
     private void saveFlashcard() {
         // Validate the title field
-        String title = flashcardTitle.getText().toString().trim();
+        String title = titleTextView.getText().toString().trim();
         if (title.isEmpty()) {
-            Toast.makeText(context, "Title cannot be empty.", Toast.LENGTH_SHORT).show();
+            ToastUtil.showToast(context, "Title cannot be empty.");
             return;
         }
 
         // Ensure there is at least one term-definition
         if (adapter.getItemCount() == 0) {
-            Toast.makeText(context, "Add at least 1 item.", Toast.LENGTH_SHORT).show();
+            ToastUtil.showToast(context, "Add at least 1 item.");
             return;
         };
 
@@ -128,7 +128,7 @@ public class EditActivity extends AppCompatActivity {
         try {
             updatedFlashcardData = collectUpdatedFlashcardsData();
         } catch (IllegalArgumentException ex) {
-            Toast.makeText(context, ex.getMessage(), Toast.LENGTH_SHORT).show();
+            ToastUtil.showToast(context, ex.getMessage());
             return;
         }
 
@@ -136,13 +136,13 @@ public class EditActivity extends AppCompatActivity {
             boolean success = db.updateFlashcard(updatedFlashcardData);
             if (success) {
                 returnToPreviousActivity();
-                Toast.makeText(this, "Flashcard updated successfully.", Toast.LENGTH_SHORT).show();
+                ToastUtil.showToast(context, "Flashcard updated successfully.");
             }
         }
     }
 
     private void swipeToDelete() {
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+        var itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
@@ -154,10 +154,10 @@ public class EditActivity extends AppCompatActivity {
                 int termDefinitionId = adapter.getTermDefinitionList().get(position).getTermDefinitionId();
                 adapter.removeTermDefinition(position);
 
-                try (DatabaseHelper dbHelper = new DatabaseHelper(context)) {
+                try (var dbHelper = new DatabaseHelper(context)) {
                     boolean success = dbHelper.deleteTermDefinition(termDefinitionId);
                     if (success) {
-                        Toast.makeText(context, "term-definition deleted. " + termDefinitionId, Toast.LENGTH_SHORT).show();
+                        ToastUtil.showToast(context, "Term deleted");
                     }
                 }
             }
@@ -168,11 +168,11 @@ public class EditActivity extends AppCompatActivity {
 
     private void populateTermDefinitions() {
         // set the flashcard title
-        flashcardTitle.setText(this.flashcard.getTitle());
+        titleTextView.setText(this.flashcard.getTitle());
 
         try (DatabaseHelper dbHelper = new DatabaseHelper(context)) {
             int flashcardId = this.flashcard.getFlashcardId();
-            List<FlashcardModel.TermDefinition> termDefinitionList = dbHelper.getFlashcardTermAndDefinition(flashcardId);
+            var termDefinitionList = dbHelper.getFlashcardTermAndDefinition(flashcardId);
             adapter.setTermDefinitionList(termDefinitionList);
         }
     }

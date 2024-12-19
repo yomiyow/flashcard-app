@@ -9,17 +9,16 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import project.authentication.R;
 
-public class EditItemRecyclerAdapter extends RecyclerView.Adapter<EditItemRecyclerAdapter.FlashcardViewHolder> {
+public class EditItemAdapter extends RecyclerView.Adapter<EditItemAdapter.FlashcardViewHolder> {
 
     private final Context context;
     private List<FlashcardModel.TermDefinition> termDefinitionList;
 
-    public EditItemRecyclerAdapter(Context context) {
+    public EditItemAdapter(Context context) {
         this.context = context;
     }
 
@@ -33,16 +32,16 @@ public class EditItemRecyclerAdapter extends RecyclerView.Adapter<EditItemRecycl
 
     @NonNull
     @Override
-    public EditItemRecyclerAdapter.FlashcardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View flashcardItem = inflater.inflate(R.layout.flashcard_new_item, parent, false);
+    public EditItemAdapter.FlashcardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        var inflater = LayoutInflater.from(context);
+        var flashcardItemView = inflater.inflate(R.layout.flashcard_new_item, parent, false);
 
-        return new FlashcardViewHolder(flashcardItem);
+        return new FlashcardViewHolder(flashcardItemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull EditItemRecyclerAdapter.FlashcardViewHolder holder, int position) {
-        FlashcardModel.TermDefinition termDefinition = termDefinitionList.get(position);
+    public void onBindViewHolder(@NonNull EditItemAdapter.FlashcardViewHolder holder, int position) {
+        var termDefinition = termDefinitionList.get(position);
         holder.termDefinitionId = termDefinition.getTermDefinitionId();
         holder.termET.setText(termDefinition.getTerm());
         holder.definitionET.setText(termDefinition.getDefinition());
