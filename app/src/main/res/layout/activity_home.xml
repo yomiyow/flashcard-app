@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     tools:context="project.main.HomeActivity"
     android:orientation="vertical"
-    android:background="@color/white"
-    android:layout_margin="12dp">
+    android:layout_margin="10dp">
 
     <!-- Header -->
     <LinearLayout
