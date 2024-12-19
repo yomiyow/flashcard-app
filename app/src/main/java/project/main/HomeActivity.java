@@ -1,11 +1,9 @@
 package project.main;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.ViewSwitcher;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -13,19 +11,17 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
-
 import project.authentication.R;
 import project.model.DatabaseHelper;
-import project.model.FlashcardRecyclerAdapter;
+import project.model.FlashcardPreviewAdapter;
 import project.model.FlashcardModel;
 
 public class HomeActivity extends AppCompatActivity {
 
     private Context context;
     private ImageButton addBtn;
-    private FlashcardRecyclerAdapter adapter;
+    private FlashcardPreviewAdapter adapter;
     private RecyclerView recyclerView;
     private ViewSwitcher viewSwitcher;
     public final static int EMPTY_VIEW = 0;
@@ -60,22 +56,20 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void checkRecyclerViewContent() {
+        int homeDisplay = adapter.getItemCount() == 0 ? EMPTY_VIEW : RECYCLER_VIEW;
+        viewSwitcher.setDisplayedChild(homeDisplay);
+    }
+
     private void renderFlashcardsPreview() {
         try (DatabaseHelper dbHelper = new DatabaseHelper(context)) {
             List<FlashcardModel> flashcardList = dbHelper.getFlashcardTitleAndNumberOfTerms();
-            adapter = new FlashcardRecyclerAdapter(context, flashcardList);
+            adapter = new FlashcardPreviewAdapter(context, flashcardList);
             recyclerView.setAdapter(adapter);
+
+            // Check if the RecyclerView has content
+            // and switch the view accordingly
             checkRecyclerViewContent();
         }
     }
-
-    private void checkRecyclerViewContent() {
-        if (adapter.getItemCount() == 0) {
-            viewSwitcher.setDisplayedChild(EMPTY_VIEW);
-        } else {
-            viewSwitcher.setDisplayedChild(RECYCLER_VIEW);
-        }
-    }
-
-
 }

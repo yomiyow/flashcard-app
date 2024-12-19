@@ -1,6 +1,8 @@
 package project.model;
 
 import static androidx.core.content.ContextCompat.startActivity;
+
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -8,30 +10,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.text.MessageFormat;
 import java.util.List;
+
 import project.authentication.R;
 import project.main.FlashcardOpenActivity;
 import project.main.HomeActivity;
+import project.utils.ToastUtil;
 
 
-public class FlashcardRecyclerAdapter extends RecyclerView.Adapter<FlashcardRecyclerAdapter.FLashcardViewHolder> {
+public class FlashcardPreviewAdapter extends RecyclerView.Adapter<FlashcardPreviewAdapter.FLashcardViewHolder> {
 
     private final Context context;
     private final List<FlashcardModel> flashcardList;
 
-    public FlashcardRecyclerAdapter(Context context, List<FlashcardModel> flashcardList) {
+    public FlashcardPreviewAdapter(Context context, List<FlashcardModel> flashcardList) {
         this.context = context;
         this.flashcardList = flashcardList;
     }
 
     @NonNull
     @Override
-    public FlashcardRecyclerAdapter.FLashcardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public FlashcardPreviewAdapter.FLashcardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View flashcardPreview = inflater.inflate(R.layout.flashcard_preview, parent, false);
 
@@ -47,31 +52,38 @@ public class FlashcardRecyclerAdapter extends RecyclerView.Adapter<FlashcardRecy
 
     // Delete flashcard
     private void deleteFlashcard(FlashcardModel flashcard, int position) {
-        int flashcardId = flashcard.getFlashcardId();
+        new AlertDialog.Builder(context)
+            .setTitle("Delete confirmation")
+            .setMessage("Are you sure you want to delete " + flashcard.getTitle() + "?")
+            .setPositiveButton("Delete", (dialog, which) -> {
+                try (DatabaseHelper dbHelper = new DatabaseHelper(context)) {
+                    boolean success = dbHelper.deleteFlashcard(flashcard.getFlashcardId());
+                    if (success) {
+                        flashcardList.remove(flashcard);
+                        notifyItemRemoved(position);
+                    } else {
+                        ToastUtil.showToast(context, "Deletion failed");
+                    }
+                }
 
-        try (DatabaseHelper dbHelper = new DatabaseHelper(context)) {
-            boolean success = dbHelper.deleteFlashcard(flashcardId);
-            if (success) {
-                flashcardList.remove(flashcard);
-                notifyItemRemoved(position);
-                Toast.makeText(context, flashcard.getTitle() + " deleted successful..", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, "Deletion failed", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        if (flashcardList.isEmpty()) {
-            ViewSwitcher viewSwitcher = ((HomeActivity) context).findViewById(R.id.home_view_switcher);
-            viewSwitcher.setDisplayedChild(HomeActivity.EMPTY_VIEW);
-        }
+                // If the flashcard list is empty,
+                // switch HomeActivity display to empty view
+                if (flashcardList.isEmpty()) {
+                    ViewSwitcher homeViewSwitcher = ((HomeActivity) context).findViewById(R.id.home_view_switcher);
+                    homeViewSwitcher.setDisplayedChild(HomeActivity.EMPTY_VIEW);
+                }
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FlashcardRecyclerAdapter.FLashcardViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull FlashcardPreviewAdapter.FLashcardViewHolder holder, int position) {
         FlashcardModel flashcard = flashcardList.get(position);
         holder.titleTV.setText(flashcard.getTitle());
-        holder.numOfTermsTV.setText(flashcard.getNumberOfTerms() + " terms");
+        holder.numOfTermsTV.setText(MessageFormat.format("{0} terms", flashcard.getNumberOfTerms()));
 
+        // event listener to flashcard preview
         holder.itemView.setOnClickListener((v) -> openFlashcard(flashcard));
         holder.deleteBtn.setOnClickListener((v) -> deleteFlashcard(flashcard, position));
     }

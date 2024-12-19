@@ -33,11 +33,13 @@
             tools:ignore="ContentDescription" />
     </LinearLayout>
 
+    <!-- switch between two views -->
     <ViewSwitcher
         android:id="@+id/home_view_switcher"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- Home empty view -->
         <LinearLayout
             android:id="@+id/flashcard_container"
             android:layout_width="match_parent"
@@ -87,6 +89,7 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- Home recycler view -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/flashcard_recycler_view"
             android:layout_width="match_parent"
