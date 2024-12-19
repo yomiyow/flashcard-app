@@ -28,14 +28,12 @@ import project.model.FlashcardModel;
 public class EditActivity extends AppCompatActivity {
 
     private Context context;
-    private ImageButton previousAct;
     private ImageButton saveBtn;
     private FloatingActionButton addBtn;
     private EditText flashcardTitle;
     private RecyclerView recyclerView;
     private EditItemRecyclerAdapter adapter;
     private FlashcardModel flashcard;
-    private List<FlashcardModel.TermDefinition> termDefinitionList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,17 +48,14 @@ public class EditActivity extends AppCompatActivity {
 
         initInstanceVariables();
         populateTermDefinitions();
-        previousAct.setOnClickListener((v) -> returnToPreviousActivity());
         addBtn.setOnClickListener((v) -> addNewEmptyFlashcardItem());
         saveBtn.setOnClickListener((v) -> saveFlashcard());
         swipeToDelete();
-
     }
 
     private void initInstanceVariables() {
         context = EditActivity.this;
         flashcardTitle = findViewById(R.id.flashcard_title);
-        previousAct = findViewById(R.id.previous_activity);
         addBtn = findViewById(R.id.add_btn);
         saveBtn = findViewById(R.id.save_flashcard);
         recyclerView = findViewById(R.id.flashcard_new_item_rv);
@@ -70,15 +65,15 @@ public class EditActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
+    private void addNewEmptyFlashcardItem() {
+        adapter.addTermDefinition(new FlashcardModel.TermDefinition("", ""));
+    }
+
     private void returnToPreviousActivity() {
         Intent intent = new Intent(context, FlashcardOpenActivity.class);
         FlashcardModel updatedFlashcard = collectUpdatedFlashcardsData();
         intent.putExtra("flashcard", updatedFlashcard);
         startActivity(intent);
-    }
-
-    private void addNewEmptyFlashcardItem() {
-        adapter.addTermDefinition(new FlashcardModel.TermDefinition("", ""));
     }
 
     @Nullable
@@ -90,14 +85,12 @@ public class EditActivity extends AppCompatActivity {
             if (viewHolder instanceof EditItemRecyclerAdapter.FlashcardViewHolder) {
                 EditItemRecyclerAdapter.FlashcardViewHolder flashcardItem = (EditItemRecyclerAdapter.FlashcardViewHolder) viewHolder;
                 int termDefinitionId = flashcardItem.getTermDefinitionId();
+
                 String term = flashcardItem.getTermET().getText().toString();
                 String definition = flashcardItem.getDefinitionET().getText().toString();
 
-                System.out.println(String.valueOf(termDefinitionId) + " " + term + " " + definition);
-
                 // Ensure there is no empty term-definition
                 if (term.isEmpty() || definition.isEmpty()) {
-                    Toast.makeText(context, "Term and definition cannot be empty.", Toast.LENGTH_SHORT).show();
                     throw new IllegalArgumentException("Term Definition cannot be empty");
                 }
 
@@ -105,14 +98,14 @@ public class EditActivity extends AppCompatActivity {
             }
         }
 
-        System.out.println(termDefinitionList.toString());
-
+        // save update flashcard data and return it
         String title = flashcardTitle.getText().toString().trim();
         FlashcardModel updatedFlashcard = new FlashcardModel();
         updatedFlashcard.setFlashcardId(this.flashcard.getFlashcardId());
         updatedFlashcard.setTitle(title);
         updatedFlashcard.setTermDefinitions(termDefinitionList);
         updatedFlashcard.setNumberOfTerms(this.flashcard.getNumberOfTerms());
+        updatedFlashcard.setNumberOfTerms(termDefinitionList.size());
 
         return updatedFlashcard;
     }
@@ -136,14 +129,15 @@ public class EditActivity extends AppCompatActivity {
         try {
             updatedFlashcardData = collectUpdatedFlashcardsData();
         } catch (IllegalArgumentException ex) {
+            Toast.makeText(context, ex.getMessage(), Toast.LENGTH_SHORT).show();
             return;
         }
 
         try (DatabaseHelper db = new DatabaseHelper(context)) {
             boolean success = db.updateFlashcard(updatedFlashcardData);
             if (success) {
-                Toast.makeText(this, "Flashcard saved successfully.", Toast.LENGTH_SHORT).show();
                 returnToPreviousActivity();
+                Toast.makeText(this, "Flashcard updated successfully.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -158,12 +152,19 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
+                int termDefinitionId = adapter.getTermDefinitionList().get(position).getTermDefinitionId();
                 adapter.removeTermDefinition(position);
+
+                try (DatabaseHelper dbHelper = new DatabaseHelper(context)) {
+                    boolean success = dbHelper.deleteTermDefinition(termDefinitionId);
+                    if (success) {
+                        Toast.makeText(context, "term-definition deleted. " + termDefinitionId, Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         });
 
         itemTouchHelper.attachToRecyclerView(recyclerView);
-
     }
 
     private void populateTermDefinitions() {
@@ -174,7 +175,6 @@ public class EditActivity extends AppCompatActivity {
             int flashcardId = this.flashcard.getFlashcardId();
             List<FlashcardModel.TermDefinition> termDefinitionList = dbHelper.getFlashcardTermAndDefinition(flashcardId);
             adapter.setTermDefinitionList(termDefinitionList);
-            this.termDefinitionList = adapter.getTermDefinitionList();
         }
     }
 }

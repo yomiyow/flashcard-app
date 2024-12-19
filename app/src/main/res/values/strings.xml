@@ -21,4 +21,5 @@
     <string name="home_h1">Your Learning Journey Starts Here!</string>
     <string name="home_description_1">It looks a little empty...</string>
     <string name="home_description_2">Create your first flashcard and unlock a smarter way to learn.</string>
+    <string name="edit_flashcard">Edit Flashcard</string>
 </resources>

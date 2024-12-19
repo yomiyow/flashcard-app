@@ -281,4 +281,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
     }
+
+    public boolean deleteTermDefinition(int termDefinitionId) {
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            int rowsAffected = db.delete(
+                    TABLE_TERM_DEFINITION,
+                    COLUMN_TERM_DEFINITION_ID + " = ?",
+                    new String[] { String.valueOf(termDefinitionId) }
+            );
+
+            return rowsAffected > 0;
+        }
+    }
 }
