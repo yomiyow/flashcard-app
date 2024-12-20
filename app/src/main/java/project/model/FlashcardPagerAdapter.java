@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 import project.authentication.R;
@@ -33,12 +34,12 @@ public class FlashcardPagerAdapter extends RecyclerView.Adapter<FlashcardPagerAd
         return new FlashcardViewHolder(flashcardItem);
     }
 
-    private void flipCard(View front, View back) {
+    private void flipCard(CardView cardView, TextView termTV, TextView definitionTV) {
         var flipOut = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.animator.flip_out);
         var flipIn = (AnimatorSet) AnimatorInflater.loadAnimator(context, R.animator.flip_in);
 
-        flipOut.setTarget(front);
-        flipIn.setTarget(back);
+        flipOut.setTarget(cardView);
+        flipIn.setTarget(cardView);
 
         flipOut.start();
         flipIn.start();
@@ -46,21 +47,19 @@ public class FlashcardPagerAdapter extends RecyclerView.Adapter<FlashcardPagerAd
         flipOut.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                front.setVisibility(View.GONE);
-                back.setVisibility(View.VISIBLE);
+                if (termTV.getVisibility() == View.VISIBLE) {
+                    termTV.setVisibility(View.GONE);
+                    definitionTV.setVisibility(View.VISIBLE);
+                } else {
+                    termTV.setVisibility(View.VISIBLE);
+                    definitionTV.setVisibility(View.GONE);
+                }
             }
         });
     }
 
     private void toggleFlashcardVisibility(FlashcardPagerAdapter.FlashcardViewHolder holder) {
-        var term = holder.termTV;
-        var definition = holder.definitionTV;
-        boolean isTermVisible = holder.termTV.getVisibility() == View.VISIBLE;
-        if (isTermVisible) {
-            flipCard(term, definition);
-        } else {
-            flipCard(definition, term);
-        }
+        flipCard((CardView) holder.itemView, holder.termTV, holder.definitionTV);
     }
 
     @Override
