@@ -42,7 +42,8 @@
         android:id="@+id/flashcard_view_pager"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_margin="10dp"/>
+        android:layout_margin="10dp"
+        android:layout_weight="2"/>
 
     <TextView
         android:id="@+id/details"
@@ -50,5 +51,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:textSize="@dimen/tv_text_size"
-        android:layout_marginLeft="10dp"/>
+        android:layout_marginLeft="10dp"
+        android:layout_weight="1"/>
 </LinearLayout>
