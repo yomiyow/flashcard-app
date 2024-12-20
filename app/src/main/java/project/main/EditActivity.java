@@ -1,5 +1,6 @@
 package project.main;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -123,7 +124,11 @@ public class EditActivity extends AppCompatActivity {
 
         // Ensure there is at least one term-definition
         if (adapter.getItemCount() == 0) {
-            ToastUtil.showToast(context, "Add at least 1 item.");
+            new AlertDialog.Builder(context)
+                .setTitle("Incomplete Flashcard Set")
+                .setMessage("Please add at least one term and definition before saving.")
+                .setPositiveButton("OK", null)
+                .show();
             return;
         };
 
@@ -138,10 +143,7 @@ public class EditActivity extends AppCompatActivity {
 
         try (DatabaseHelper db = new DatabaseHelper(context)) {
             boolean success = db.updateFlashcard(updatedFlashcardData);
-            if (success) {
-                returnToPreviousActivity();
-                ToastUtil.showToast(context, "Flashcard updated successfully.");
-            }
+            if (success) returnToPreviousActivity();
         }
     }
 

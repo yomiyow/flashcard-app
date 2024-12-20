@@ -1,5 +1,6 @@
 package project.main;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,7 +37,7 @@ public class CreateActivity extends AppCompatActivity {
     private ImageButton leftArrowBtn;
     private ImageButton checkBtn;
     private FloatingActionButton addBtn;
-    private EditText flashcardTitle;
+    private EditText flashcardEditText;
     private RecyclerView recyclerView;
     private FlashcardItemAdapter adapter;
 
@@ -63,7 +64,7 @@ public class CreateActivity extends AppCompatActivity {
 
     private void initClassVariables() {
         context = CreateActivity.this;
-        flashcardTitle = findViewById(R.id.flashcard_title);
+        flashcardEditText = findViewById(R.id.flashcard_title);
         leftArrowBtn = findViewById(R.id.previous_activity);
         addBtn = findViewById(R.id.add_btn);
         checkBtn = findViewById(R.id.save_flashcard);
@@ -84,19 +85,6 @@ public class CreateActivity extends AppCompatActivity {
 
     @Nullable
     private FlashcardModel collectFlashcardsData() {
-        // Validate the title field
-        String title = flashcardTitle.getText().toString().trim();
-        if (title.isEmpty()) {
-            ToastUtil.showToast(context, "Title cannot be empty.");
-            return null;
-        }
-
-        // Ensure there is at least one term-definition
-        if (adapter.getItemCount() == 0) {
-            ToastUtil.showToast(context, "Add at least 1 item.");
-            return null;
-        };
-
         List<FlashcardModel.TermDefinition> termDefinitionList = new ArrayList<>();
         for (int i = 0; i < adapter.getItemCount(); i++) {
             var viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
@@ -116,13 +104,29 @@ public class CreateActivity extends AppCompatActivity {
             }
         }
 
-        return new FlashcardModel(title, termDefinitionList);
+        return new FlashcardModel(flashcardEditText.getText().toString(), termDefinitionList);
     }
 
     private void saveFlashcard() {
-        var flashcardData = collectFlashcardsData();
+        // Validate the title field
+        String title = flashcardEditText.getText().toString().trim();
+        if (title.isEmpty()) {
+            ToastUtil.showToast(context, "Title cannot be empty.");
+            return;
+        }
+
+        // Ensure there is at least one term-definition
+        if (adapter.getItemCount() == 0) {
+            new AlertDialog.Builder(context)
+                .setTitle("Incomplete Flashcard Set")
+                .setMessage("Please add at least one term and definition before saving.")
+                .setPositiveButton("OK", null)
+                .show();
+            return;
+        };
 
         // Do not save if validation fails
+        var flashcardData = collectFlashcardsData();
         if (flashcardData == null) { return; }
 
         try (var db = new DatabaseHelper(context)) {
