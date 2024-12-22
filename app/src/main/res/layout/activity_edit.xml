@@ -5,16 +5,14 @@
     android:id="@+id/edit_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="project.main.EditActivity"
-    android:background="@color/white">
+    tools:context="project.main.EditActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingLeft="13dp"
-        android:paddingRight="13dp"
-        android:background="@color/white">
+        android:paddingRight="13dp">
 
         <!-- Header -->
         <LinearLayout

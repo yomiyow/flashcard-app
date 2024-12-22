@@ -22,6 +22,13 @@
             android:layout_gravity="center_vertical"
             tools:ignore="ContentDescription" />
 
+        <TextView
+            android:id="@+id/term_current_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textSize="@dimen/tv_text_size"/>
+
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"

@@ -25,6 +25,7 @@ public class FlashcardOpenActivity extends AppCompatActivity {
     private Context context;
     private ImageButton leftArrowBtn;
     private ImageButton editBtn;
+    private TextView termCurrentIndex;
     private FlashcardModel flashcard;
 
     @Override
@@ -49,6 +50,7 @@ public class FlashcardOpenActivity extends AppCompatActivity {
         leftArrowBtn = findViewById(R.id.previous_activity);
         editBtn = findViewById(R.id.edit_flashcard);
         flashcard = getIntent().getParcelableExtra("flashcard");
+        termCurrentIndex = findViewById(R.id.term_current_number);
     }
 
     private void returnToHomeActivity() {
@@ -63,7 +65,7 @@ public class FlashcardOpenActivity extends AppCompatActivity {
     }
 
     private void renderFlashcardItems() {
-        // Set title
+        // Set title and number of terms
         TextView details = findViewById(R.id.details);
         details.setText(MessageFormat.format("{0} | {1} terms", flashcard.getTitle(), flashcard.getNumberOfTerms()));
 
@@ -74,5 +76,16 @@ public class FlashcardOpenActivity extends AppCompatActivity {
             var adapter = new FlashcardPagerAdapter(context, termDefinitionList);
             viewPager.setAdapter(adapter);
         }
+
+
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                termCurrentIndex.setText(MessageFormat.format(
+                        "Term {0} of {1}", position + 1, flashcard.getNumberOfTerms()
+                ));
+            }
+        });
     }
 }

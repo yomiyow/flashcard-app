@@ -48,7 +48,9 @@ public class CreateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.create_main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            findViewById(R.id.flashcard_new_item_rv).setPadding(0, 0, 0, imeInsets.bottom);
             return insets;
         });
 
