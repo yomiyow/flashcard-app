@@ -78,9 +78,9 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void returnToPreviousActivity() {
-        var intent = new Intent(context, FlashcardOpenActivity.class);
-        var updatedFlashcard = collectUpdatedFlashcardsData();
-        intent.putExtra("flashcard", updatedFlashcard);
+        var intent = new Intent(context, HomeActivity.class);
+//        var updatedFlashcard = collectUpdatedFlashcardsData();
+//        intent.putExtra("flashcard", updatedFlashcard);
         startActivity(intent);
     }
 
